@@ -1,9 +1,11 @@
-<html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>闲鱼市场热点 - 交互原型 v6</title>
-  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin=""></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin=""></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -21,4 +23,627 @@
     .MW0{min-width:0}.WF{width:100%}.HF{height:100%}
     .T{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   </style>
-<script>"use strict";
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const{useState}=React;
+const fp=(n)=>"¥"+n.toLocaleString();
+
+/* ==================== MOCK DATA ==================== */
+const sellableItems=[
+  {name:"Nintendo Switch",price:1850,change:8.2,emoji:"🎮",hot:true},
+  {name:"AirPods Pro 2",price:1050,change:3.5,emoji:"🎧",hot:true},
+  {name:"iPhone 15 Pro",price:6800,change:-2.1,emoji:"📱",hot:false},
+  {name:"Dyson V12",price:1680,change:2.8,emoji:"🧹",hot:false},
+];
+const watchItems=[
+  {name:"Dyson V15",price:2450,change:5.3,emoji:"🧹",hot:true},
+  {name:"PS5 Pro",price:3200,change:4.8,emoji:"🎮",hot:true},
+  {name:"MacBook Air M2",price:6200,change:-1.8,emoji:"💻",hot:false},
+  {name:"徕卡 Q3",price:28500,change:3.9,emoji:"📷",hot:false},
+];
+
+const risers=[
+  {name:"Nintendo Switch",price:1850,pct:8.2},{name:"Labubu 毛绒公仔",price:680,pct:6.7},
+  {name:"Dyson V15",price:2450,pct:5.3},{name:"PS5 Pro",price:3200,pct:4.8},
+  {name:"徕卡 Q3",price:28500,pct:3.9},{name:"富士 X100VI",price:9800,pct:3.5},
+  {name:"AirPods Pro 2",price:1050,pct:3.2},{name:"戴森 HD15",price:2100,pct:2.9},
+  {name:"Switch OLED",price:2100,pct:2.7},{name:"索尼 A7C2",price:11200,pct:2.5},
+  {name:"Lululemon 瑜伽裤",price:380,pct:2.3},{name:"始祖鸟冲锋衣",price:2800,pct:2.1},
+  {name:"DJI Mini 4 Pro",price:3500,pct:1.9},{name:"Kindle Oasis",price:980,pct:1.7},
+  {name:"Apple Watch Ultra 2",price:4100,pct:1.5},
+];
+const fallers=[
+  {name:"iPhone 15 Pro",price:6800,pct:-2.1},{name:"MacBook Air M2",price:6200,pct:-1.8},
+  {name:"iPad Pro M4",price:5900,pct:-1.5},{name:"LEGO 10316",price:1280,pct:-1.2},
+  {name:"索尼 WH-1000XM5",price:1450,pct:-0.9},{name:"Samsung S24 Ultra",price:5500,pct:-0.8},
+  {name:"MacBook Pro M3",price:9800,pct:-0.7},{name:"iPad Air M2",price:3800,pct:-0.6},
+  {name:"Apple Watch S9",price:2200,pct:-0.5},{name:"AirPods Max",price:2800,pct:-0.4},
+  {name:"Meta Quest 3",price:2600,pct:-0.3},{name:"iPhone 14 Pro",price:4500,pct:-0.3},
+  {name:"Bose QC45",price:1200,pct:-0.2},{name:"Google Pixel 8",price:3200,pct:-0.2},
+  {name:"Nintendo 3DS",price:850,pct:-0.1},
+];
+const hotSelling=[
+  {name:"iPhone 15 Pro",price:6800,pct:-2.1},{name:"AirPods Pro 2",price:1050,pct:3.2},
+  {name:"Nintendo Switch",price:1850,pct:8.2},{name:"iPad Air M2",price:3800,pct:-0.6},
+  {name:"MacBook Air M2",price:6200,pct:-1.8},{name:"Apple Watch S9",price:2200,pct:-0.5},
+  {name:"Dyson V12",price:1680,pct:2.8},{name:"PS5 Pro",price:3200,pct:4.8},
+  {name:"索尼 WH-1000XM5",price:1450,pct:-0.9},{name:"Samsung S24 Ultra",price:5500,pct:-0.8},
+  {name:"Lululemon 瑜伽裤",price:380,pct:2.3},{name:"Dyson V15",price:2450,pct:5.3},
+  {name:"iPhone 14 Pro",price:4500,pct:-0.3},{name:"Kindle Oasis",price:980,pct:1.7},
+  {name:"LEGO 10316",price:1280,pct:-1.2},
+];
+const hotSearchData=[
+  {name:"露营装备",price:580,pct:4.2},{name:"Switch 游戏卡",price:280,pct:3.8},
+  {name:"Labubu",price:680,pct:6.7},{name:"Dyson 吸尘器",price:1680,pct:2.8},
+  {name:"胶片相机",price:1200,pct:5.1},{name:"跑步机",price:1500,pct:-1.2},
+  {name:"滑雪板",price:2800,pct:3.5},{name:"投影仪",price:1800,pct:-0.8},
+  {name:"机械键盘",price:450,pct:1.5},{name:"电动滑板车",price:2200,pct:-0.5},
+  {name:"瑜伽垫",price:120,pct:0.8},{name:"拍立得",price:380,pct:2.1},
+  {name:"咖啡机",price:1500,pct:1.2},{name:"空气炸锅",price:280,pct:-0.3},
+  {name:"电子琴",price:800,pct:0.9},
+];
+
+const switchDeals=[
+  {title:"Switch OLED 日版 9.5新",price:"¥1,820",time:"2小时前"},
+  {title:"Switch 动森限定 箱说全",price:"¥1,950",time:"5小时前"},
+  {title:"Switch 续航版 充电器+包",price:"¥1,780",time:"昨天"},
+];
+const switchOnSale=[
+  {title:"Switch OLED 白色 箱说全 95新",price:"¥1,880"},
+  {title:"Switch 动森限定 9新 无暗病",price:"¥1,920"},
+  {title:"Switch 续航版 全套配件",price:"¥1,750"},
+];
+const iphoneDeals=[
+  {title:"iPhone 15 Pro 256G 黑色 95新",price:"¥6,750",time:"2小时前"},
+  {title:"iPhone 15 Pro 国行 箱说全",price:"¥6,900",time:"5小时前"},
+  {title:"iPhone 15 Pro 蓝色 无磕碰",price:"¥6,600",time:"昨天"},
+];
+const iphoneOnSale=[
+  {title:"iPhone 15 Pro 256G 国行 箱说全",price:"¥6,900"},
+  {title:"iPhone 15 Pro 蓝色 95新 无磨损",price:"¥6,650"},
+  {title:"iPhone 15 Pro 白色 充电器+包",price:"¥6,780"},
+];
+
+const tbSellable=[
+  {name:"Nintendo Switch",price:1850,pct:8.2,emoji:"🎮"},
+  {name:"AirPods Pro 2",price:1050,pct:3.5,emoji:"🎧"},
+  {name:"iPhone 15 Pro",price:6800,pct:-2.1,emoji:"📱"},
+  {name:"Dyson V12",price:1680,pct:2.8,emoji:"🧹"},
+  {name:"Apple Watch S9",price:2200,pct:-0.5,emoji:"⌚"},
+  {name:"Samsung Galaxy Buds",price:580,pct:1.2,emoji:"🎧"},
+];
+const xySellable=[
+  {name:"MacBook Air M2",price:6200,pct:-1.8,emoji:"💻"},
+  {name:"iPad mini 6",price:2100,pct:1.2,emoji:"📱"},
+  {name:"Kindle Paperwhite",price:680,pct:0.8,emoji:"📚"},
+];
+
+const watchListFull=[
+  {name:"Dyson V15",price:2450,pct:5.3,alert:true,emoji:"🧹"},
+  {name:"PS5 Pro",price:3200,pct:4.8,alert:true,emoji:"🎮"},
+  {name:"Nintendo Switch",price:1850,pct:8.2,alert:false,emoji:"🎮"},
+  {name:"MacBook Air M2",price:6200,pct:-1.8,alert:false,emoji:"💻"},
+  {name:"iPhone 15 Pro",price:6800,pct:-2.1,alert:false,emoji:"📱"},
+  {name:"AirPods Pro 2",price:1050,pct:3.5,alert:false,emoji:"🎧"},
+  {name:"徕卡 Q3",price:28500,pct:3.9,alert:true,emoji:"📷"},
+];
+const recommendWatch=[
+  {name:"MacBook Air M3",price:7200,pct:1.2,reason:"你买过同品牌"},
+  {name:"Apple Watch Ultra 2",price:4100,pct:-0.5,reason:"与已关注品类相关"},
+  {name:"iPad mini 7",price:3200,pct:0.8,reason:"近期搜索过"},
+];
+
+/* ==================== SHARED COMPONENTS ==================== */
+const StatusBar=()=>(
+  <div className="F AIC JCB" style={{padding:"8px 16px 4px",color:"#333",fontSize:11}}>
+    <span style={{fontWeight:600}}>9:41</span>
+    <div className="F AIC G1"><span style={{fontSize:9}}>●●●● 5G</span><span style={{fontSize:10}}>🔋</span></div>
+  </div>
+);
+
+const BottomTabs=()=>{
+  const tabs=[{k:"home",l:"首页",i:"🏠"},{k:"local",l:"同城",i:"📍"},{k:"pub",l:"发布",i:"+"},{k:"msg",l:"消息",i:"💬"},{k:"me",l:"我的",i:"👤"}];
+  return(
+    <div className="F JCA AIC" style={{padding:"4px 8px 16px",borderTop:"1px solid #F0F0F0",background:"#fff"}}>
+      {tabs.map(t=>(
+        <div key={t.k} className="F FC AIC" style={{width:56,gap:2}}>
+          {t.k==="pub"?<div className="F AIC JCC RF" style={{width:40,height:40,background:"#FFE400",marginTop:-10,fontSize:20,fontWeight:300,color:"#1A1A1A"}}>+</div>
+          :<span style={{fontSize:20}}>{t.i}</span>}
+          <span style={{fontSize:10,color:"#999"}}>{t.l}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+/* 商品基础信息模块 — 参考截图设计 */
+const ProductInfo=({name,emoji,price,change,period="近七日"})=>{
+  const up=change>0;
+  return(
+    <div style={{padding:"12px 16px 16px",background:"#fff"}}>
+      <div className="F AIS G3">
+        <div className="F AIC JCC" style={{width:56,height:56,background:"#F5F5F5",borderRadius:12,fontSize:28,flexShrink:0}}>{emoji}</div>
+        <div>
+          <div style={{fontSize:16,fontWeight:700,color:"#1A1A1A"}}>{name}</div>
+          <div className="F AIC G1" style={{marginTop:6}}>
+            <span style={{fontSize:11,fontWeight:700,color:"#1A1A1A",background:"#FFE400",padding:"2px 8px",borderRadius:4}}>闲鱼价</span>
+            <span style={{fontSize:11,color:"#999"}}>二手市场公允价</span>
+          </div>
+        </div>
+      </div>
+      <div style={{fontSize:34,fontWeight:900,color:"#1A1A1A",marginTop:12}}>{fp(price)}</div>
+      <div style={{fontSize:14,fontWeight:600,color:up?"#FF4D4F":"#52C41A",marginTop:4}}>
+        {up?"↑":"↓"}{Math.abs(change)}% {period}
+      </div>
+    </div>
+  );
+};
+
+/* SVG 走势图 */
+const TrendSVG=({pts,color="#FF4D4F"})=>{
+  const min=Math.min(...pts),max=Math.max(...pts),range=max-min||1;
+  const w=310,h=80,pad=8;
+  const points=pts.map((v,i)=>{
+    const x=pad+(i/(pts.length-1))*(w-pad*2);
+    const y=h-pad-((v-min)/range)*(h-pad*2);
+    return`${x},${y}`;
+  }).join(" ");
+  const gid="g"+Math.random().toString(36).slice(2,6);
+  return(
+    <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" style={{display:"block"}}>
+      <defs><linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor={color} stopOpacity="0.18"/><stop offset="100%" stopColor={color} stopOpacity="0"/>
+      </linearGradient></defs>
+      <polygon points={`${pad},${h-pad} ${points} ${w-pad},${h-pad}`} fill={`url(#${gid})`}/>
+      <polyline points={points} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+};
+
+/* 价格走势图模块（含市场分析）*/
+const PriceChartModule=({pts,color,analysis})=>{
+  const[tab,setTab]=useState("7d");
+  return(
+    <div style={{padding:"0 16px",marginTop:8}}>
+      <div className="F AIC G2" style={{marginBottom:8}}>
+        {[{k:"7d",l:"近7日走势"},{k:"30d",l:"近30日走势"},{k:"90d",l:"近90日走势"}].map(t=>(
+          <span key={t.k} onClick={()=>setTab(t.k)} className="CP" style={{
+            fontSize:11,fontWeight:tab===t.k?700:400,color:tab===t.k?"#1A1A1A":"#999",
+            padding:"4px 10px",borderRadius:20,background:tab===t.k?"#F0F0F0":"transparent"
+          }}>{t.l}</span>
+        ))}
+      </div>
+      <TrendSVG pts={pts} color={color}/>
+      <div style={{marginTop:12}}>
+        <div style={{fontSize:14,fontWeight:700,color:"#1A1A1A",marginBottom:6}}>市场分析</div>
+        <div style={{fontSize:12,color:"#666",lineHeight:1.7}}>{analysis}</div>
+      </div>
+    </div>
+  );
+};
+
+/* 商品列表模块（成交记录/在售商品）*/
+const ProductListModule=({deals,onsale,emoji="📦"})=>{
+  const[tab,setTab]=useState("deals");
+  const data=tab==="deals"?deals:onsale;
+  return(
+    <div style={{margin:"12px 16px 0",background:"#fff",borderRadius:12,overflow:"hidden"}}>
+      <div className="F" style={{borderBottom:"1px solid #F5F5F5"}}>
+        {[{k:"deals",l:"成交记录"},{k:"onsale",l:"在售商品"}].map(t=>(
+          <div key={t.k} onClick={()=>setTab(t.k)} className="F1 TC CP" style={{
+            padding:"8px 0",fontSize:12,fontWeight:tab===t.k?700:400,color:tab===t.k?"#1A1A1A":"#999",
+            borderBottom:tab===t.k?"2px solid #1A1A1A":"2px solid transparent"
+          }}>{t.l}</div>
+        ))}
+      </div>
+      {data.map((item,i)=>(
+        <div key={i} className="F AIC G3" style={{padding:"10px 12px",borderBottom:i<data.length-1?"1px solid #F5F5F5":"none"}}>
+          <div className="F AIC JCC RLG" style={{width:36,height:36,background:"#F5F5F5",fontSize:18}}>{emoji}</div>
+          <div className="F1 MW0">
+            <div className="T" style={{fontSize:12,color:"#1A1A1A"}}>{item.title}</div>
+            {item.time&&<div style={{fontSize:10,color:"#BBB",marginTop:2}}>{item.time}</div>}
+          </div>
+          <span style={{fontSize:13,fontWeight:700,color:"#1A1A1A"}}>{item.price}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+/* 按钮行动区 */
+const ActionBar=({mainText,followed,onFollow})=>(
+  <div className="F AIC G2" style={{padding:"12px 16px",borderTop:"1px solid #F0F0F0",background:"#fff"}}>
+    <button className="F1 B0 CP" style={{padding:"12px 0",borderRadius:12,background:"#FFE400",color:"#1A1A1A",fontSize:15,fontWeight:800}}>{mainText}</button>
+    <button onClick={onFollow} className="CP" style={{padding:"12px 16px",borderRadius:12,background:"transparent",border:followed?"2px solid #FFE400":"2px solid #E0E0E0",color:followed?"#1A1A1A":"#666",fontSize:13,fontWeight:600,whiteSpace:"nowrap"}}>
+      {followed?"已关注 ✓":"加入关注 +"}
+    </button>
+  </div>
+);
+
+/* 三列表格头 */
+const ColHeaders=()=>(
+  <div className="F AIC" style={{padding:"8px 12px",borderBottom:"1px solid #F0F0F0"}}>
+    <span className="F1" style={{fontSize:11,color:"#BBB",fontWeight:600}}>热点</span>
+    <span style={{fontSize:11,color:"#BBB",fontWeight:600,width:80,textAlign:"right"}}>闲鱼价</span>
+    <span style={{fontSize:11,color:"#BBB",fontWeight:600,width:60,textAlign:"right"}}>涨幅</span>
+  </div>
+);
+
+/* 三列行 */
+const RankRow=({rank,name,price,pct,onClick,isLast})=>{
+  return(
+    <div onClick={onClick} className="F AIC CP" style={{
+      padding:"10px 12px",borderBottom:isLast?"none":"1px solid #F8F8F8",transition:"background .12s"
+    }} onMouseEnter={e=>e.currentTarget.style.background="#FAFAFA"} onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+      <div className="F AIC F1 MW0 G2">
+        {rank!=null&&<span style={{width:20,fontSize:12,fontWeight:700,color:rank<=3?(pct>=0?"#FF4D4F":"#52C41A"):"#CCC"}}>{rank}</span>}
+        <span className="T" style={{fontSize:13,fontWeight:500,color:"#1A1A1A"}}>{name}</span>
+      </div>
+      <span style={{fontSize:13,fontWeight:600,color:"#1A1A1A",width:80,textAlign:"right"}}>{fp(price)}</span>
+      <span style={{fontSize:13,fontWeight:700,color:pct>=0?"#FF4D4F":"#52C41A",width:60,textAlign:"right"}}>{pct>=0?"+":""}{pct}%</span>
+    </div>
+  );
+};
+
+/* 我的关注/我可卖的 列表行 - 带图片和操作按钮 */
+const ActionListRow=({emoji,name,price,pct,alert,btnText,onClick,onAction,isLast})=>{
+  const up=pct>0;
+  return(
+    <div className="F AIC" style={{padding:"10px 12px",borderBottom:isLast?"none":"1px solid #F8F8F8",height:64}}>
+      <div onClick={onClick} className="F AIC F1 MW0 G3 CP" style={{minHeight:44}}>
+        <div className="F AIC JCC RLG" style={{width:44,height:44,background:"#F5F5F5",fontSize:22,flexShrink:0}}>{emoji}</div>
+        <div className="F1 MW0">
+          <div className="F AIC G1">
+            <span className="T" style={{fontSize:14,fontWeight:600,color:"#1A1A1A"}}>{name}</span>
+            {alert&&<span style={{fontSize:10}}>🔔</span>}
+          </div>
+          <div className="F AIC G2" style={{marginTop:2}}>
+            <span style={{fontSize:13,fontWeight:700,color:"#1A1A1A"}}>{fp(price)}</span>
+            <span style={{fontSize:12,fontWeight:600,color:up?"#FF4D4F":"#52C41A"}}>{up?"↑":"↓"}{Math.abs(pct)}%</span>
+          </div>
+        </div>
+      </div>
+      <button onClick={onAction} className="B0 CP RLG" style={{padding:"8px 14px",background:"#FFE400",color:"#1A1A1A",fontSize:12,fontWeight:700,whiteSpace:"nowrap",marginLeft:8}}>{btnText}</button>
+    </div>
+  );};
+
+/* ==================== 1. 热点Tab首页 ==================== */
+const HomePage=({onNavigate})=>{
+  const[rankTab,setRankTab]=useState("rise");
+  const rankMap={rise:risers,fall:fallers,hot:hotSelling,search:hotSearchData};
+  const rankData=rankMap[rankTab]||risers;
+  const[activeTab,setActiveTab]=useState("热点");
+  const tabs=["逛逛神器","找服务","热点","游戏","数码","玩乐"];
+
+  const CardScroller=({items,title,btnText,onViewAll,ctxMode})=>{
+    const hasItems=items&&items.length>0;
+    return(
+    <div style={{padding:"8px 12px 2px"}}>
+      <div className="F AIC JCB" style={{marginBottom:6}}>
+        <span style={{fontSize:15,fontWeight:700,color:"#1A1A1A"}}>{title}</span>
+        <span onClick={onViewAll} className="CP" style={{fontSize:11,color:"#999"}}>查看全部 ›</span>
+      </div>
+      <div className="F G2 OXA HS" style={{paddingBottom:4}}>
+        {hasItems?items.map((item,i)=>(
+          <div key={i} onClick={()=>onNavigate("detail",ctxMode)} className="FS0 BW RXL SS CP" style={{width:118,padding:8,position:"relative"}}>
+            {item.hot&&<div style={{position:"absolute",top:4,right:4,background:"linear-gradient(135deg,#FF6B35,#FF4D4F)",color:"#fff",fontSize:8,fontWeight:700,padding:"1px 5px",borderRadius:6}}>好时机</div>}
+            <div className="TC" style={{fontSize:20,marginBottom:2}}>{item.emoji}</div>
+            <div className="TC T" style={{fontSize:11,color:"#666",marginBottom:2}}>{item.name}</div>
+            <div className="TC" style={{fontSize:15,fontWeight:800,color:"#1A1A1A"}}>{fp(item.price)}</div>
+            <div className="TC" style={{fontSize:10,color:item.change>0?"#FF4D4F":"#52C41A",fontWeight:600,marginBottom:4}}>
+              {item.change>0?"↑":"↓"}{Math.abs(item.change)}%
+            </div>
+            <button onClick={e=>{e.stopPropagation()}} className="WF B0 CP RLG" style={{padding:"5px 0",background:"#FFE400",color:"#1A1A1A",fontSize:10,fontWeight:700}}>{btnText}</button>
+          </div>
+        )):(
+          <div onClick={()=>onNavigate("search")} className="FS0 BW RXL SS CP" style={{width:180,padding:10,display:"flex",flexDirection:"column",justifyContent:"center"}}>
+            <div style={{fontSize:13,color:"#999",marginBottom:2}}>看看你的东西值多少？</div>
+            <div style={{fontSize:11,color:"#BBB"}}>点击查闲鱼价 →</div>
+          </div>
+        )}
+        <div onClick={onViewAll} className="FS0 F FC AIC JCC RXL SS CP" style={{width:64,background:"#FAFAFA"}}>
+          <span style={{fontSize:11,color:"#999",fontWeight:600}}>查看</span>
+          <span style={{fontSize:11,color:"#999",fontWeight:600}}>全部 ›</span>
+        </div>
+      </div>
+    </div>
+  );};
+
+  return(
+    <div className="F FC HF BG">
+      <StatusBar/>
+      {/* App搜索框 */}
+      <div style={{padding:"4px 12px 8px",background:"#fff"}}>
+        <div className="F AIC G2 RF" style={{padding:"8px 12px",background:"#F5F5F5"}}>
+          <span style={{color:"#999",fontSize:14}}>🔍</span>
+          <span style={{color:"#BBB",fontSize:13}}>搜商品</span>
+        </div>
+      </div>
+      {/* 横向Tab */}
+      <div className="F AIC OXA HS" style={{background:"#fff",borderBottom:"1px solid #F0F0F0",padding:"0 4px"}}>
+        {tabs.map(t=>(
+          <div key={t} onClick={()=>setActiveTab(t)} className="FS0 CP TC" style={{padding:"8px 12px",position:"relative"}}>
+            <span style={{fontSize:13,fontWeight:t===activeTab?800:400,color:t===activeTab?"#1A1A1A":"#999"}}>{t}</span>
+            {t===activeTab&&<div style={{position:"absolute",bottom:0,left:"50%",transform:"translateX(-50%)",width:20,height:3,borderRadius:2,background:"#FFE400"}}/>}
+          </div>
+        ))}
+      </div>
+
+      {/* 内容区 */}
+      <div className="F1 OYA HS">
+        {/* 闲鱼价心智区 + 查价入口 - 优化屏效 */}
+        <div style={{background:"#fff",padding:"10px 12px",borderBottom:"1px solid #F0F0F0"}}>
+          <div className="F AIC JCB">
+            <div className="F AIC G2">
+              <span style={{fontSize:18,fontWeight:900,color:"#1A1A1A"}}>闲鱼价</span>
+              <span style={{fontSize:12,color:"#999"}}>·</span>
+              <span style={{fontSize:12,color:"#666"}}>基于10亿笔真实成交</span>
+            </div>
+            <div onClick={()=>onNavigate("search")} className="F AIC G2 RF CP" style={{padding:"6px 12px",background:"#F5F5F5",width:120}}>
+              <span style={{color:"#999",fontSize:13}}>🔍</span>
+              <span style={{color:"#BBB",fontSize:12}}>查闲鱼价</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 我可卖的 */}
+        <CardScroller
+          items={sellableItems} title="我可卖的"
+          btnText="一键转卖" ctxMode="sell"
+          onViewAll={()=>onNavigate("mysellable")}
+        />
+
+        {/* 我关注的 */}
+        <CardScroller
+          items={watchItems} title="我关注的"
+          btnText="一键发布" ctxMode="publish"
+          onViewAll={()=>onNavigate("watchlist")}
+        />
+
+        {/* 热点榜单 */}
+        <div style={{padding:"8px 12px 0"}}>
+          <div className="F AIC JCB" style={{marginBottom:6}}>
+            <span style={{fontSize:15,fontWeight:700,color:"#1A1A1A"}}>热点榜单</span>
+          </div>
+          <div className="F AIC G3" style={{marginBottom:6}}>
+            {[
+              {k:"rise",l:"涨幅榜",c:"#FF4D4F"},{k:"fall",l:"跌幅榜",c:"#52C41A"},
+              {k:"hot",l:"热卖榜",c:"#FF8C00"},{k:"search",l:"热搜榜",c:"#6C3CE9"},
+            ].map(t=>(
+              <span key={t.k} onClick={()=>setRankTab(t.k)} className="CP" style={{
+                fontSize:13,fontWeight:700,color:rankTab===t.k?t.c:"#CCC",
+                paddingBottom:4,borderBottom:rankTab===t.k?`2px solid ${t.c}`:"2px solid transparent"
+              }}>{t.l}</span>
+            ))}
+          </div>
+          <div className="BW RXL OH SS">
+            <ColHeaders/>
+            {rankData.map((item,i)=>(
+              <RankRow key={i} rank={i+1} name={item.name} price={item.price} pct={item.pct}
+                onClick={()=>onNavigate("detail","publish")} isLast={i===rankData.length-1}/>
+            ))}
+          </div>
+        </div>
+
+        <div style={{height:12}}/>
+      </div>
+      <BottomTabs/>
+    </div>
+  );
+};
+
+/* ==================== 2. 行情详情页 ==================== */
+const DetailPage=({onNavigate,mode="sell"})=>{
+  const[followed,setFollowed]=useState(false);
+  const isSell=mode==="sell";
+  const product={name:"Nintendo Switch",emoji:"🎮",price:1850,change:8.2};
+  const pts=[1710,1730,1755,1740,1770,1800,1835,1850];
+  const analysis="任天堂于3月15日宣布Switch停产，二手市场供给预期收紧，闲鱼价持续走高。当前供需比0.6，卖方市场明显，出手速度加快至平均2.3天。";
+
+  return(
+    <div className="F FC HF BW">
+      <StatusBar/>
+      <div className="F AIC" style={{padding:"8px 12px"}}>
+        <span onClick={()=>onNavigate("home")} className="CP" style={{fontSize:18}}>←</span>
+        <span className="F1 TC" style={{fontSize:15,fontWeight:700}}>{product.name}</span>
+        <div className="F AIC G3">
+          <span className="CP" style={{fontSize:16}}>↗</span>
+          <span onClick={()=>setFollowed(!followed)} className="CP" style={{fontSize:16,color:followed?"#FFE400":"#CCC"}}>{followed?"★":"☆"}</span>
+        </div>
+      </div>
+      <div className="F1 OYA HS">
+        <ProductInfo name={product.name} emoji={product.emoji} price={product.price} change={product.change}/>
+        <PriceChartModule pts={pts} color="#FF4D4F" analysis={analysis}/>
+        <ProductListModule deals={switchDeals} onsale={switchOnSale} emoji="🎮"/>
+        <div style={{height:80}}/>
+      </div>
+      <ActionBar mainText={isSell?"一键转卖":"一键发布"} followed={followed} onFollow={()=>setFollowed(!followed)}/>
+    </div>
+  );
+};
+
+/* ==================== 3. 查闲鱼价 ==================== */
+const SearchResultPage=({onNavigate})=>{
+  const[followed,setFollowed]=useState(false);
+  const product={name:"iPhone 15 Pro",emoji:"📱",price:6800,change:-2.1};
+  const pts=[7100,7050,6950,6900,6850,6820,6800];
+  const analysis="iPhone 16系列发布后，iPhone 15 Pro二手价格持续走低。当前供给充足，买方市场明显。预计短期内仍有小幅下探空间。";
+
+  return(
+    <div className="F FC HF BG">
+      <StatusBar/>
+      <div className="F AIC G2" style={{padding:"8px 12px",background:"#fff"}}>
+        <span onClick={()=>onNavigate("home")} className="CP" style={{fontSize:18}}>←</span>
+        <div className="F1 F AIC G2 RF" style={{padding:"8px 12px",background:"#F5F5F5"}}>
+          <span style={{color:"#999",fontSize:14}}>🔍</span>
+          <span style={{fontSize:13,color:"#1A1A1A"}}>iPhone 15 Pro</span>
+        </div>
+        <span style={{fontSize:13,color:"#1A1A1A",fontWeight:600}}>搜索</span>
+      </div>
+      <div className="F1 OYA HS">
+        <div style={{margin:"12px 12px 0",borderRadius:16,overflow:"hidden",background:"#fff"}}>
+          <ProductInfo name={product.name} emoji={product.emoji} price={product.price} change={product.change}/>
+        </div>
+        <div style={{margin:"0 12px",background:"#fff",borderRadius:"0 0 16px 16px",padding:"0 4px 4px"}}>
+          <PriceChartModule pts={pts} color="#52C41A" analysis={analysis}/>
+        </div>
+        <ProductListModule deals={iphoneDeals} onsale={iphoneOnSale} emoji="📱"/>
+        <div style={{height:80}}/>
+      </div>
+      <ActionBar mainText="一键发布" followed={followed} onFollow={()=>setFollowed(!followed)}/>
+    </div>
+  );
+};
+
+/* ==================== 4. 我的关注详情页 ==================== */
+const WatchlistPage=({onNavigate})=>{
+  const[filter,setFilter]=useState("all");
+  const items=watchListFull;
+  const filtered=filter==="all"?items:filter==="up"?items.filter(x=>x.pct>0):items.filter(x=>x.pct<0);
+  const upC=items.filter(x=>x.pct>0).length,downC=items.filter(x=>x.pct<0).length;
+
+  return(
+    <div className="F FC HF BG">
+      <StatusBar/>
+      <div className="F AIC" style={{padding:"8px 12px",background:"#fff"}}>
+        <span onClick={()=>onNavigate("home")} className="CP" style={{fontSize:18}}>←</span>
+        <span className="F1 TC" style={{fontSize:15,fontWeight:700}}>我的关注</span>
+        <div className="F AIC G3">
+          <span className="CP" style={{fontSize:13,color:"#1A1A1A",fontWeight:600}}>编辑</span>
+          <span className="CP" style={{fontSize:20,color:"#1A1A1A",fontWeight:300}}>+</span>
+        </div>
+      </div>
+      {/* 筛选栏 */}
+      <div className="F AIC G2" style={{padding:"8px 12px",background:"#fff",borderBottom:"1px solid #F0F0F0"}}>
+        {[{k:"all",l:"全部",bg:"#1A1A1A"},{k:"up",l:"涨",bg:"#FF4D4F"},{k:"down",l:"跌",bg:"#52C41A"}].map(f=>(
+          <span key={f.k} onClick={()=>setFilter(f.k)} className="CP RF" style={{
+            fontSize:11,fontWeight:600,padding:"4px 12px",
+            color:filter===f.k?"#fff":"#999",background:filter===f.k?f.bg:"#F5F5F5"
+          }}>{f.l}</span>
+        ))}
+        <div className="F1"/>
+        <div className="F AIC G1">
+          <span style={{fontSize:11,color:"#999"}}>今日</span>
+          <span style={{fontSize:11,color:"#FF4D4F",fontWeight:700}}>{upC}涨</span>
+          <span style={{fontSize:11,color:"#52C41A",fontWeight:700}}>{downC}跌</span>
+        </div>
+      </div>
+      <div className="F1 OYA HS">
+        {/* 列表 */}
+        <div className="BW">
+          {filtered.map((item,i)=>(
+            <ActionListRow key={i} emoji={item.emoji} name={item.name} price={item.price} pct={item.pct} alert={item.alert}
+              btnText="一键发布" onClick={()=>onNavigate("detail","publish")} onAction={()=>{}} isLast={i===filtered.length-1}/>
+          ))}
+        </div>
+
+        {/* 推荐关注 — 白色背景 */}
+        <div style={{padding:"0 12px 20px"}}>
+          <div className="BW RXL SS" style={{padding:12}}>
+            <div style={{fontSize:14,fontWeight:700,color:"#1A1A1A",marginBottom:8}}>你可能还想关注</div>
+            {recommendWatch.map((item,i)=>(
+              <div key={i} className="F AIC" style={{padding:"8px 0",borderBottom:i<recommendWatch.length-1?"1px solid #F5F5F5":"none"}}>
+                <div className="F1">
+                  <div className="F AIC G2">
+                    <span style={{fontSize:13,fontWeight:600,color:"#1A1A1A"}}>{item.name}</span>
+                    <span style={{fontSize:12,color:"#999"}}>{fp(item.price)}</span>
+                    <span style={{fontSize:11,color:item.pct>0?"#FF4D4F":"#52C41A",fontWeight:600}}>{item.pct>0?"+":""}{item.pct}%</span>
+                  </div>
+                  <div style={{fontSize:10,color:"#BBB",marginTop:2}}>{item.reason}</div>
+                </div>
+                <button className="B0 CP RF" style={{padding:"4px 12px",background:"#F5F5F5",color:"#666",fontSize:12,fontWeight:600}}>+ 添加</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ==================== 5. 我可卖的详情页 ==================== */
+const MySellablePage=({onNavigate})=>{
+  const[filter,setFilter]=useState("tb");
+  const data=filter==="tb"?tbSellable:xySellable;
+
+  return(
+    <div className="F FC HF BG">
+      <StatusBar/>
+      <div className="F AIC" style={{padding:"8px 12px",background:"#fff"}}>
+        <span onClick={()=>onNavigate("home")} className="CP" style={{fontSize:18}}>←</span>
+        <span className="F1 TC" style={{fontSize:15,fontWeight:700}}>我可卖的</span>
+        <div style={{width:18}}/>
+      </div>
+      {/* 筛选栏 */}
+      <div className="F AIC G2" style={{padding:"8px 12px",background:"#fff",borderBottom:"1px solid #F0F0F0"}}>
+        {[{k:"tb",l:"淘宝订单转卖"},{k:"xy",l:"闲鱼订单转卖"}].map(f=>(
+          <span key={f.k} onClick={()=>setFilter(f.k)} className="CP RF" style={{
+            fontSize:11,fontWeight:600,padding:"4px 12px",
+            color:filter===f.k?"#fff":"#999",background:filter===f.k?"#1A1A1A":"#F5F5F5"
+          }}>{f.l}</span>
+        ))}
+      </div>
+      <div className="F1 OYA HS">
+        <div className="BW">
+          {data.map((item,i)=>(
+            <ActionListRow key={i} emoji={item.emoji} name={item.name} price={item.price} pct={item.pct} alert={false}
+              btnText="一键转卖" onClick={()=>onNavigate("detail","sell")} onAction={()=>{}} isLast={i===data.length-1}/>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ==================== APP SHELL ==================== */
+function App(){
+  const[screen,setScreen]=useState("home");
+  const[detailMode,setDetailMode]=useState("sell");
+  const navigate=(target,mode)=>{
+    if(target==="detail"&&mode)setDetailMode(mode);
+    else if(target==="detail")setDetailMode("publish");
+    setScreen(target);
+  };
+
+  const navItems=[
+    {k:"home",l:"热点Tab首页"},{k:"detail",l:"行情详情页"},{k:"search",l:"查闲鱼价"},
+    {k:"watchlist",l:"我的关注"},{k:"mysellable",l:"我可卖的"},
+  ];
+
+  return(
+    <div className="F FC AIC JCC" style={{minHeight:"100vh",padding:16,background:"linear-gradient(135deg,#1A1A2E 0%,#16213E 50%,#0F3460 100%)"}}>
+      <div className="TC" style={{marginBottom:12}}>
+        <h1 style={{fontSize:17,fontWeight:700,color:"#FFE400",marginBottom:4}}>闲鱼市场热点 - 交互原型 v6</h1>
+        <p style={{fontSize:11,color:"rgba(255,255,255,.4)"}}>点击卡片/按钮跳转 · 5个页面完整交互</p>
+      </div>
+      <div className="F G1" style={{marginBottom:12,flexWrap:"wrap",justifyContent:"center"}}>
+        {navItems.map(s=>(
+          <button key={s.k} onClick={()=>navigate(s.k)} className="B0 CP RF" style={{
+            padding:"4px 10px",fontSize:11,
+            background:screen===s.k?"#FFE400":"rgba(255,255,255,.1)",
+            color:screen===s.k?"#1A1A1A":"rgba(255,255,255,.5)",
+            fontWeight:screen===s.k?700:400
+          }}>{s.l}</button>
+        ))}
+      </div>
+      <div className="OH" style={{width:375,height:812,borderRadius:40,background:"#000",padding:6,boxShadow:"0 20px 60px rgba(0,0,0,.5),0 0 0 2px rgba(255,255,255,.1)",position:"relative"}}>
+        <div style={{position:"absolute",top:6,left:"50%",transform:"translateX(-50%)",width:150,height:28,background:"#000",borderRadius:"0 0 20px 20px",zIndex:20}}/>
+        <div className="WF HF OH" style={{borderRadius:34,background:"#fff"}}>
+          {screen==="home"&&<HomePage onNavigate={navigate}/>}
+          {screen==="detail"&&<DetailPage onNavigate={navigate} mode={detailMode}/>}
+          {screen==="search"&&<SearchResultPage onNavigate={navigate}/>}
+          {screen==="watchlist"&&<WatchlistPage onNavigate={navigate}/>}
+          {screen==="mysellable"&&<MySellablePage onNavigate={navigate}/>}
+        </div>
+      </div>
+      <p style={{color:"rgba(255,255,255,.2)",fontSize:10,marginTop:12}}>闲鱼市场热点方案 v6 · 交互原型</p>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
