@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>热点 - 闲鱼价行情中心</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+:root {
+  --yellow:#FFE400; --yellow-dark:#E6CD00; --yellow-light:#FFF8D6;
+  --black:#1A1A1A; --gray-900:#333; --gray-700:#666; --gray-500:#999; --gray-400:#B0B0B0; --gray-300:#D9D9D9; --gray-200:#E8E8E8; --gray-100:#F5F5F5;
+  --white:#fff;
+  --red:#FF4D4F; --red-bg:#FFF0F0;
+  --green:#52C41A; --green-bg:#F0FFF0;
+  --font:'Noto Sans SC',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+  --mono:'DM Mono',Menlo,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font);background:#E0E0E0;display:flex;justify-content:center;align-items:center;min-height:100vh;overflow:hidden;}
+.phone{width:375px;height:812px;background:var(--white);border-radius:44px;overflow:hidden;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.35),0 0 0 3px #222,inset 0 0 0 1px rgba(255,255,255,.05);}
+@media(max-width:420px){body{background:var(--white);}.phone{width:100vw;height:100dvh;border-radius:0;box-shadow:none;}}
+
+.statusbar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:14px 20px 0;font-size:15px;font-weight:600;background:var(--white);position:relative;z-index:100;}
+.statusbar .r{display:flex;gap:4px;align-items:center;}
+.statusbar .r svg{width:16px;height:14px;}
+
+.page{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--white);transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);z-index:1;display:flex;flex-direction:column;overflow:hidden;}
+.page.active{transform:translateX(0);z-index:10;}
+.page.behind{transform:translateX(-28%);z-index:5;}
+.page.base{transform:translateX(0);z-index:1;}
+
+.app-tabs{display:flex;align-items:center;background:var(--white);padding:0 4px;overflow-x:auto;border-bottom:1px solid var(--gray-100);}
+.app-tabs::-webkit-scrollbar{display:none;}
+.app-tab{flex-shrink:0;padding:10px 12px;font-size:13px;color:var(--gray-500);cursor:pointer;position:relative;border:none;background:none;font-family:var(--font);white-space:nowrap;}
+.app-tab.active{color:var(--black);font-weight:700;}
+.app-tab.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:18px;height:3px;background:var(--yellow);border-radius:2px;}
+
+.navbar{display:flex;align-items:center;height:44px;padding:0 16px;background:var(--white);}
+.navbar .back{width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:none;}
+.navbar .back svg{width:18px;height:18px;}
+.navbar .title{flex:1;text-align:center;font-size:16px;font-weight:700;color:var(--black);margin:0 8px;}
+.navbar .right{display:flex;gap:12px;align-items:center;}
+.navbar .right svg{width:20px;height:20px;color:var(--gray-500);cursor:pointer;}
+.follow-btn{border:1px solid var(--gray-300);background:var(--white);border-radius:14px;padding:4px 12px;font-size:12px;color:var(--gray-700);font-family:var(--font);cursor:pointer;}
+.follow-btn.on{border-color:var(--yellow);background:var(--yellow-light);color:var(--black);font-weight:500;}
+
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.scroll::-webkit-scrollbar{display:none;}
+
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px;background:var(--white);}
+.sec-head .label{font-size:15px;font-weight:700;color:var(--black);}
+.sec-head .more{font-size:12px;color:var(--gray-500);cursor:pointer;}
+
+.inner-tabs{display:flex;background:var(--white);padding:0 16px;}
+.inner-tab{padding:10px 0;margin-right:24px;font-size:14px;color:var(--gray-500);cursor:pointer;border:none;background:none;font-family:var(--font);position:relative;}
+.inner-tab.active{color:var(--black);font-weight:700;}
+.inner-tab.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:2.5px;background:var(--yellow);border-radius:2px;}
+
+.bottom-bar{display:flex;align-items:flex-start;padding:6px 0 20px;background:var(--white);border-top:1px solid var(--gray-100);flex-shrink:0;}
+.btab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border:none;background:none;font-family:var(--font);}
+.btab svg{width:22px;height:22px;color:var(--gray-400);}
+.btab span{font-size:10px;color:var(--gray-500);}
+.btab.on svg{color:var(--black);}
+.btab.on span{color:var(--black);font-weight:700;}
+.btab.pub .pub-icon{width:36px;height:36px;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center;margin-top:-8px;box-shadow:0 2px 8px rgba(255,228,0,.4);}
+.btab.pub .pub-icon svg{color:var(--black);width:18px;height:18px;}
+
+.chart-wrap{padding:0 16px 12px;background:var(--white);}
+.chart-head{display:flex;align-items:center;justify-content:space-between;padding:8px 0;margin-bottom:4px;}
+.chart-head .t{font-size:13px;font-weight:700;color:var(--black);}
+.period-tabs{display:flex;}
+.period-tab{font-size:11px;padding:3px 10px;border:1px solid var(--gray-300);background:var(--white);color:var(--gray-700);cursor:pointer;font-family:var(--font);}
+.period-tab:first-child{border-radius:4px 0 0 4px;}
+.period-tab:last-child{border-radius:0 4px 4px 0;}
+.period-tab+.period-tab{border-left:none;}
+.period-tab.on{background:var(--yellow);border-color:var(--yellow);color:var(--black);font-weight:600;}
+.canvas-box{width:100%;height:160px;}
+.canvas-box canvas{width:100%;height:100%;}
+
+.analysis{padding:12px 16px;background:var(--white);border-top:8px solid var(--gray-100);}
+.analysis .a-title{font-size:14px;font-weight:700;color:var(--black);margin-bottom:8px;}
+.analysis .a-body{font-size:13px;color:var(--gray-700);line-height:1.7;}
+.analysis .a-prompt{margin-top:10px;padding:10px;background:#F8F6FF;border-radius:6px;border-left:3px solid #7C5CFC;}
+.analysis .a-prompt .p-label{font-size:10px;color:#7C5CFC;font-weight:600;margin-bottom:4px;}
+.analysis .a-prompt .p-text{font-size:11px;color:var(--gray-700);line-height:1.6;font-family:var(--mono);word-break:break-all;}
+
+.rules-panel{padding:12px 16px;background:var(--white);border-top:8px solid var(--gray-100);}
+.rules-panel .rp-title{font-size:13px;font-weight:700;color:var(--black);margin-bottom:8px;}
+.rule-row{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--gray-100);font-size:12px;}
+.rule-row:last-child{border-bottom:none;}
+.rule-row .r-pri{width:28px;font-weight:700;color:#7C5CFC;flex-shrink:0;}
+.rule-row .r-name{width:70px;font-weight:500;color:var(--black);flex-shrink:0;}
+.rule-row .r-cond{flex:1;color:var(--gray-700);}
+.rule-row .r-status{width:40px;text-align:right;flex-shrink:0;font-weight:600;}
+
+.cta-bar{display:flex;gap:8px;padding:10px 16px 24px;background:var(--white);border-top:1px solid var(--gray-100);flex-shrink:0;}
+.cta-main{flex:2;padding:12px;border-radius:10px;border:none;background:var(--yellow);color:var(--black);font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font);}
+.cta-main:active{background:var(--yellow-dark);}
+.cta-sub{flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--gray-300);background:var(--white);color:var(--gray-700);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);}
+
+.list-row{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;background:var(--white);transition:background .12s;}
+.list-row:active{background:var(--gray-100);}
+.list-row .info{flex:1;min-width:0;}
+.list-row .info .name{font-size:14px;font-weight:500;color:var(--black);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.list-row .info .sub{font-size:11px;color:var(--gray-500);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.list-row .val{text-align:right;margin-left:12px;flex-shrink:0;}
+.list-row .val .price{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--black);}
+.list-row .val .pct{font-family:var(--mono);font-size:12px;font-weight:500;margin-top:1px;}
+.pct-up{color:var(--red);}
+.pct-down{color:var(--green);}
+
+.table-head{display:flex;align-items:center;padding:6px 16px;background:var(--gray-100);font-size:11px;color:var(--gray-500);}
+.table-head .th-n{flex:1;}.table-head .th-p{width:80px;text-align:right;}.table-head .th-c{width:60px;text-align:right;}
+
+.table-row{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;background:var(--white);}
+.table-row:active{background:var(--gray-100);}
+.table-row .tn{flex:1;font-size:14px;font-weight:500;color:var(--black);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.table-row .tp{width:80px;text-align:right;font-family:var(--mono);font-size:13px;color:var(--black);}
+.table-row .tc{width:60px;text-align:right;font-family:var(--mono);font-size:13px;font-weight:500;}
+
+.filter-bar{display:flex;gap:8px;padding:8px 16px;background:var(--white);border-bottom:1px solid var(--gray-100);}
+.filter-chip{padding:4px 14px;border-radius:14px;font-size:12px;color:var(--gray-700);background:var(--gray-100);border:none;cursor:pointer;font-family:var(--font);}
+.filter-chip.on{background:var(--black);color:var(--white);font-weight:500;}
+
+.overview-bar{padding:8px 16px;background:var(--white);font-size:12px;color:var(--gray-500);border-bottom:1px solid var(--gray-100);}
+.overview-bar .uc{color:var(--red);font-weight:600;}
+.overview-bar .dc{color:var(--green);font-weight:600;}
+
+.sku-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--gray-100);}
+.sku-row .sku-tag{font-size:12px;background:var(--gray-100);padding:3px 10px;border-radius:4px;color:var(--gray-700);margin-right:12px;flex-shrink:0;}
+.sku-row .sku-price{flex:1;font-family:var(--mono);font-size:14px;font-weight:500;}
+.sku-row .sku-pct{font-family:var(--mono);font-size:12px;padding:2px 6px;border-radius:4px;}
+
+.pd-img{width:100%;height:300px;background:linear-gradient(145deg,#f0ece4,#e0d8cc);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.pd-img .bf{position:absolute;top:50px;left:14px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;z-index:10;}
+.pd-img .bf svg{width:18px;height:18px;color:#fff;}
+
+.tc-card{margin:8px 16px 12px;padding:12px;border:1px solid var(--gray-200);border-radius:10px;background:var(--white);cursor:pointer;}
+.tc-card:active{background:var(--gray-100);}
+.tc-card .tch{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.tc-card .tcl{font-size:13px;font-weight:600;color:var(--black);display:flex;align-items:center;gap:6px;}
+.tc-card .tcl .dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);}
+.tc-card .tcc{width:100%;height:50px;margin-bottom:6px;}
+.tc-card .tcf{display:flex;justify-content:space-between;font-size:11px;color:var(--gray-500);}
+.tc-card .tcf .tv{font-family:var(--mono);font-weight:500;color:var(--black);}
+
+/* 热点话题卡片 */
+.topic-card{padding:12px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;background:var(--white);transition:background .12s;}
+.topic-card:active{background:var(--gray-100);}
+.topic-card .topic-title{font-size:14px;font-weight:700;color:var(--black);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+.topic-card .topic-title .tag{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600;}
+.topic-card .topic-title .tag-up{background:var(--red-bg);color:var(--red);}
+.topic-card .topic-title .tag-down{background:var(--green-bg);color:var(--green);}
+.topic-card .topic-title .tag-hot{background:var(--yellow-light);color:#B8860B;}
+.topic-card .topic-desc{font-size:12px;color:var(--gray-700);line-height:1.5;margin-bottom:6px;}
+.topic-card .topic-meta{font-size:11px;color:var(--gray-500);display:flex;gap:12px;}
+
+.formula-bar{margin:0 16px 10px;padding:10px 12px;background:var(--gray-100);border-radius:8px;font-size:11px;color:var(--gray-700);line-height:1.5;font-family:var(--mono);}
+.formula-bar strong{color:var(--black);}
+</style>
+</head>
+<body>
+<div class="phone">
+
+<!-- ===== PAGE 1: 热点首页 ===== -->
+<div class="page base active" id="p-home">
+  <div class="statusbar"><span>9:41</span><div class="r"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.24 4.24 0 00-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg></div></div>
+  <div style="padding:4px 12px 6px;background:var(--white);"><div style="display:flex;align-items:center;gap:8px;background:var(--gray-100);border-radius:18px;height:32px;padding:0 12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span style="font-size:13px;color:var(--gray-400);">搜索</span></div></div>
+  <div class="app-tabs"><button class="app-tab">逛逛神器</button><button class="app-tab">找服务</button><button class="app-tab active">热点</button><button class="app-tab">游戏</button><button class="app-tab">数码</button><button class="app-tab">玩乐</button></div>
+
+  <div class="scroll" id="home-scroll">
+    <!-- 上半部分：热点话题 -->
+    <div class="sec-head"><span class="label">热点话题</span><span class="more">由热点宝贝价格信号生成</span></div>
+    <div id="topic-list"></div>
+
+    <!-- 下半部分：热点宝贝价格 -->
+    <div style="border-top:8px solid var(--gray-100);">
+      <div class="sec-head" style="padding-bottom:0;"><span class="label">热点宝贝价格</span></div>
+      <div class="inner-tabs" id="price-tabs">
+        <button class="inner-tab active" onclick="switchPriceTab('market',this)">市场价格</button>
+        <button class="inner-tab" onclick="switchPriceTab('follow',this)">我的关注</button>
+      </div>
+      <div class="table-head"><span class="th-n">热点宝贝</span><span class="th-p">闲鱼价</span><span class="th-c">涨跌</span></div>
+      <div id="price-list"></div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btab on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>首页</span></button>
+    <button class="btab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>同城</span></button>
+    <button class="btab pub"><div class="pub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div><span>发布</span></button>
+    <button class="btab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>消息</span></button>
+    <button class="btab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>我的</span></button>
+  </div>
+</div>
+
+<!-- ===== PAGE 2: 我的关注 ===== -->
+<div class="page" id="p-follow">
+  <div class="statusbar"><span>9:41</span><div class="r"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.24 4.24 0 00-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg></div></div>
+  <div class="navbar"><button class="back" onclick="goBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button><span class="title">我的关注</span><div class="right"><span style="font-size:13px;color:var(--gray-700);cursor:pointer;">编辑</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;width:18px;height:18px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>
+  <div class="filter-bar" id="ff"><button class="filter-chip on" onclick="filterF('all',this)">全部</button><button class="filter-chip" onclick="filterF('up',this)">涨</button><button class="filter-chip" onclick="filterF('down',this)">跌</button></div>
+  <div class="overview-bar">今日 <span class="uc">4涨</span> <span class="dc">2跌</span></div>
+  <div class="table-head"><span class="th-n">热点宝贝</span><span class="th-p">闲鱼价</span><span class="th-c">涨跌</span></div>
+  <div class="scroll" id="follow-list"></div>
+</div>
+
+<!-- ===== PAGE 3: 热点话题详情 ===== -->
+<div class="page" id="p-topic">
+  <div class="statusbar"><span>9:41</span><div class="r"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.24 4.24 0 00-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg></div></div>
+  <div class="navbar"><button class="back" onclick="goBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button><span class="title" id="topic-detail-title">耐克华夫饼跑鞋涨价</span><div class="right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div></div>
+  <div class="scroll">
+    <!-- 热点词条 -->
+    <div style="padding:14px 16px;border-bottom:1px solid var(--gray-100);">
+      <div style="font-size:16px;font-weight:700;color:var(--black);margin-bottom:6px;" id="topic-headline">#耐克华夫饼跑鞋 闲鱼价一周涨5.8%</div>
+      <div style="font-size:13px;color:var(--gray-700);line-height:1.6;" id="topic-summary">复古跑鞋品类季节性需求上升，叠加社媒穿搭博主带火"复古运动风"，供需比降至0.7，卖方市场特征明显。</div>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <span style="font-size:10px;background:var(--red-bg);color:var(--red);padding:2px 8px;border-radius:3px;font-weight:600;">涨价行情</span>
+        <span style="font-size:10px;background:var(--gray-100);color:var(--gray-700);padding:2px 8px;border-radius:3px;">供需比 0.7</span>
+        <span style="font-size:10px;background:var(--gray-100);color:var(--gray-700);padding:2px 8px;border-radius:3px;">搜索↑32%</span>
+      </div>
+    </div>
+
+    <!-- 关联热点宝贝 + 价格趋势 -->
+    <div class="sec-head"><span class="label">关联热点宝贝</span><span class="more">价格趋势</span></div>
+    <div class="list-row" onclick="nav('p-item')"><span style="font-size:24px;margin-right:10px;">👟</span><div class="info"><div class="name">Nike Waffle One 小白鞋</div><div class="sub">闲鱼价 ¥420~580 · 近30日成交 512 笔</div></div><div class="val"><div class="pct pct-up">↑5.8%</div></div></div>
+    <div class="list-row" onclick="nav('p-item')"><span style="font-size:24px;margin-right:10px;">👟</span><div class="info"><div class="name">Nike Daybreak 复古跑鞋</div><div class="sub">闲鱼价 ¥350~450 · 近30日成交 198 笔</div></div><div class="val"><div class="pct pct-up">↑4.1%</div></div></div>
+    <div class="list-row" onclick="nav('p-item')"><span style="font-size:24px;margin-right:10px;">👟</span><div class="info"><div class="name">Nike Sacai 联名华夫</div><div class="sub">闲鱼价 ¥680~920 · 近30日成交 87 笔</div></div><div class="val"><div class="pct pct-up">↑7.2%</div></div></div>
+
+    <!-- 价格走势图 -->
+    <div class="chart-wrap" style="border-top:8px solid var(--gray-100);">
+      <div class="chart-head"><span class="t">价格走势（话题均价）</span><div class="period-tabs"><button class="period-tab" onclick="redraw('tc',7,this)">7日</button><button class="period-tab on" onclick="redraw('tc',30,this)">30日</button><button class="period-tab" onclick="redraw('tc',90,this)">90日</button></div></div>
+      <div class="canvas-box"><canvas id="tc"></canvas></div>
+    </div>
+
+    <!-- 市场解读 -->
+    <div class="analysis">
+      <div class="a-title">市场解读</div>
+      <div class="a-body" id="topic-analysis">耐克华夫饼跑鞋闲鱼价近7天上涨5.8%，复古跑鞋品类季节性需求上升，叠加社媒穿搭博主带火"复古运动风"，供需比降至0.7，卖方市场特征明显。搜索量7日环比+32%，市场热度持续升温，短期仍有上行空间。</div>
+      <div class="a-prompt">
+        <div class="p-label">生成该解读的 Prompt</div>
+        <div class="p-text" id="topic-prompt">待提供：需要你提供用于生成市场解读的prompt模板，包含输入变量（品类、价格、涨跌幅、供需比、搜索量等）和输出格式要求。</div>
+      </div>
+    </div>
+
+    <!-- 信号检测规则 -->
+    <div class="rules-panel">
+      <div class="rp-title">该话题命中的规则</div>
+      <div id="topic-rules">
+        <div class="rule-row"><span class="r-pri">R1</span><span class="r-name">价格异动</span><span class="r-cond">待提供具体规则</span><span class="r-status pct-up">命中</span></div>
+        <div class="rule-row"><span class="r-pri">R2</span><span class="r-name">供需失衡</span><span class="r-cond">待提供具体规则</span><span class="r-status pct-up">命中</span></div>
+      </div>
+    </div>
+
+    <!-- 同款相关商品 -->
+    <div style="border-top:8px solid var(--gray-100);">
+      <div class="sec-head"><span class="label">同款相关商品</span></div>
+      <div class="list-row" onclick="nav('p-product')"><span style="font-size:20px;margin-right:10px;">👟</span><div class="info"><div class="name">Nike Waffle One 复古华夫饼 全新</div><div class="sub">¥399 · 包邮</div></div></div>
+      <div class="list-row" onclick="nav('p-product')"><span style="font-size:20px;margin-right:10px;">👟</span><div class="info"><div class="name">耐克华夫饼跑鞋 95新 42码</div><div class="sub">¥320 · 自提</div></div></div>
+      <div class="list-row" onclick="nav('p-product')"><span style="font-size:20px;margin-right:10px;">👟</span><div class="info"><div class="name">Nike Daybreak 白灰色 女款37</div><div class="sub">¥280 · 包邮</div></div></div>
+    </div>
+    <div style="height:80px;"></div>
+  </div>
+  <div class="cta-bar"><button class="cta-main">一键发布</button><button class="cta-sub" onclick="this.textContent=this.textContent.includes('已')?'关注话题 +':'已关注 ✓'">关注话题 +</button></div>
+</div>
+
+<!-- ===== PAGE 4: 热点宝贝详情 ===== -->
+<div class="page" id="p-item">
+  <div class="statusbar"><span>9:41</span><div class="r"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.24 4.24 0 00-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg></div></div>
+  <div class="navbar"><button class="back" onclick="goBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button><span class="title">Cracle Coin 高品质IP限定宝盒</span><div class="right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg><button class="follow-btn" onclick="this.classList.toggle('on');this.textContent=this.classList.contains('on')?'已关注 ✓':'关注 +'">关注 +</button></div></div>
+  <div class="scroll">
+    <!-- 热点宝贝名称 + 价格 -->
+    <div style="padding:14px 16px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span style="font-size:32px;">🪙</span><div><div style="font-size:16px;font-weight:700;">Cracle Coin 高品质IP限定宝盒</div><div style="display:flex;align-items:center;gap:6px;margin-top:2px;"><span style="font-size:10px;background:var(--yellow);padding:1px 6px;border-radius:3px;font-weight:600;">闲鱼价</span></div></div></div>
+      <div style="display:flex;align-items:baseline;gap:6px;"><span style="font-family:var(--mono);font-size:34px;font-weight:900;">¥380<span style="font-size:20px;color:var(--gray-500);font-weight:400;">~</span>420</span><span style="font-family:var(--mono);font-size:14px;font-weight:600;color:var(--green);">↓3.2%</span><span style="font-size:11px;color:var(--gray-500);">近七日</span></div>
+    </div>
+
+    <!-- 价格走势图 -->
+    <div class="chart-wrap" style="border-top:1px solid var(--gray-100);">
+      <div class="chart-head"><span class="t">价格走势</span><div class="period-tabs"><button class="period-tab" onclick="redraw('ic',7,this)">7日</button><button class="period-tab on" onclick="redraw('ic',30,this)">30日</button><button class="period-tab" onclick="redraw('ic',90,this)">90日</button></div></div>
+      <div class="canvas-box"><canvas id="ic"></canvas></div>
+    </div>
+
+    <!-- 市场解读 -->
+    <div class="analysis">
+      <div class="a-title">市场解读</div>
+      <div class="a-body">Cracle Coin IP限定宝盒闲鱼价近7天下跌3.2%，新品上市后首批溢价空间逐步消化，市场回归理性定价。当前供需比1.2，供给端新品拆封转售增多，需求端观望情绪浓厚。预计短期仍有小幅调整空间。</div>
+      <div class="a-prompt">
+        <div class="p-label">生成该解读的 Prompt</div>
+        <div class="p-text">待提供：需要你提供用于生成市场解读的prompt模板。</div>
+      </div>
+    </div>
+
+    <!-- SKU列表 -->
+    <div style="border-top:8px solid var(--gray-100);">
+      <div class="sec-head"><span class="label">SKU 明细</span><span class="more">4个规格</span></div>
+      <div class="sku-row"><span class="sku-tag">标准版</span><span class="sku-price">¥380</span><span class="sku-pct pct-down" style="background:var(--green-bg);">↓4.0%</span></div>
+      <div class="sku-row"><span class="sku-tag">限量编号版</span><span class="sku-price">¥420</span><span class="sku-pct pct-down" style="background:var(--green-bg);">↓2.3%</span></div>
+      <div class="sku-row"><span class="sku-tag">签名版</span><span class="sku-price">¥580</span><span class="sku-pct pct-up" style="background:var(--red-bg);">↑1.2%</span></div>
+      <div class="sku-row"><span class="sku-tag">套装礼盒</span><span class="sku-price">¥650</span><span class="sku-pct pct-down" style="background:var(--green-bg);">↓1.8%</span></div>
+    </div>
+
+    <!-- 同款相关商品 -->
+    <div style="border-top:8px solid var(--gray-100);">
+      <div class="sec-head"><span class="label">同款相关商品</span></div>
+      <div class="list-row" onclick="nav('p-product')"><span style="font-size:20px;margin-right:10px;">🪙</span><div class="info"><div class="name">Cracle Coin 标准版 全新未拆</div><div class="sub">¥385 · 3月28日发布</div></div></div>
+      <div class="list-row" onclick="nav('p-product')"><span style="font-size:20px;margin-right:10px;">🪙</span><div class="info"><div class="name">Cracle Coin 限量编号 #0042</div><div class="sub">¥430 · 3月27日发布</div></div></div>
+      <div class="list-row" onclick="nav('p-product')"><span style="font-size:20px;margin-right:10px;">🪙</span><div class="info"><div class="name">Cracle Coin 标准版 拆封验货</div><div class="sub">¥375 · 3月27日发布</div></div></div>
+    </div>
+    <div style="height:80px;"></div>
+  </div>
+  <div class="cta-bar"><button class="cta-main">一键发布</button><button class="cta-sub">关注 +</button></div>
+</div>
+
+<!-- ===== PAGE 5: 商品详情页（主态） ===== -->
+<div class="page" id="p-product">
+  <div class="statusbar" style="position:absolute;top:0;left:0;right:0;background:transparent;z-index:100;color:#fff;"><span>9:41</span><div class="r"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.24 4.24 0 00-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg></div></div>
+  <div class="scroll" style="padding:0;">
+    <div class="pd-img"><button class="bf" onclick="goBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button><span style="font-size:120px;">👟</span></div>
+    <div style="padding:14px 16px;background:var(--white);">
+      <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--red);margin-bottom:4px;">¥399</div>
+      <div style="font-size:15px;color:var(--black);line-height:1.4;">Nike Waffle One 小白鞋 复古华夫饼跑鞋 男女同款 DC0481-100</div>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <span style="font-size:11px;background:var(--yellow-light);color:#B8860B;padding:2px 8px;border-radius:3px;">正品鉴定</span>
+        <span style="font-size:11px;background:var(--gray-100);color:var(--gray-700);padding:2px 8px;border-radius:3px;">7天无理由</span>
+      </div>
+    </div>
+    <!-- 热点趋势入口卡片 -->
+    <div class="tc-card" onclick="goBack()">
+      <div class="tch"><div class="tcl"><span class="dot"></span>热点行情趋势</div><span style="color:var(--gray-400);font-size:16px;">›</span></div>
+      <div class="tcc"><canvas id="pc"></canvas></div>
+      <div class="tcf"><span>近30日最低 <span class="tv">¥350</span></span><span>近30日最高 <span class="tv">¥580</span></span><span class="tv pct-up">↑5.8%</span></div>
+    </div>
+    <div style="padding:14px 16px;border-top:8px solid var(--gray-100);">
+      <div style="font-size:14px;font-weight:700;margin-bottom:8px;">商品详情</div>
+      <div style="font-size:13px;color:var(--gray-700);line-height:1.8;"><p>品牌：Nike</p><p>型号：Waffle One</p><p>货号：DC0481-100</p><p>配色：White/Orange</p><p>鞋面材质：网布+绒面革</p></div>
+    </div>
+    <div style="height:40px;"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+/* ===== 数据（占位，等你提供真实数据后替换） ===== */
+
+// 热点话题数据：由热点宝贝价格信号 + 规则 + prompt生成
+const topics = [
+  {title:'#耐克华夫饼跑鞋 闲鱼价一周涨5.8%', tag:'涨价行情', tagType:'up', desc:'复古跑鞋品类需求上升，社媒穿搭博主带火"复古运动风"，供需比降至0.7', meta:'3个关联宝贝 · 搜索↑32%'},
+  {title:'#Cracle Coin 限定宝盒 价格回调', tag:'跌价行情', tagType:'down', desc:'新品上市后首批溢价空间消化，市场回归理性定价', meta:'1个关联宝贝 · 供需比1.2'},
+  {title:'#Nintendo Switch 停产消息推高二手价', tag:'涨价行情', tagType:'up', desc:'任天堂宣布停产消息，二手供给收紧，价格快速上涨', meta:'2个关联宝贝 · 搜索↑89%'},
+  {title:'#AirPods Pro 2 稳定上涨', tag:'涨价行情', tagType:'up', desc:'新款发布带动旧款需求，性价比优势明显', meta:'1个关联宝贝 · 搜索↑15%'},
+  {title:'#iPhone 15 Pro 进入贬值周期', tag:'跌价行情', tagType:'down', desc:'iPhone 17系列发布在即，旧款开始贬值', meta:'1个关联宝贝 · 供需比1.4'},
+];
+
+// 热点宝贝价格 - 市场价格
+const marketItems = [
+  {n:'Nintendo Switch',p:'¥1,850',c:'+8.2%',up:1},
+  {n:'Nike Waffle One 小白鞋',p:'¥580',c:'+5.8%',up:1},
+  {n:'Labubu 毛绒公仔',p:'¥680',c:'+6.7%',up:1},
+  {n:'Dyson V15 吸尘器',p:'¥2,450',c:'+5.3%',up:1},
+  {n:'PS5 Pro',p:'¥3,200',c:'+4.8%',up:1},
+  {n:'AirPods Pro 2',p:'¥1,050',c:'+3.5%',up:1},
+  {n:'Cracle Coin IP限定宝盒',p:'¥380',c:'-3.2%',up:0},
+  {n:'iPhone 15 Pro',p:'¥6,800',c:'-2.1%',up:0},
+  {n:'MacBook Air M2',p:'¥6,200',c:'-1.8%',up:0},
+  {n:'iPad Pro M4',p:'¥5,900',c:'-1.5%',up:0},
+];
+
+// 热点宝贝价格 - 我的关注
+const followItems = [
+  {n:'Nike Waffle One 小白鞋',p:'¥580',c:'+5.8%',up:1},
+  {n:'Nintendo Switch',p:'¥1,850',c:'+8.2%',up:1},
+  {n:'Cracle Coin IP限定宝盒',p:'¥380',c:'-3.2%',up:0},
+  {n:'AirPods Pro 2',p:'¥1,050',c:'+3.5%',up:1},
+  {n:'Labubu 毛绒公仔',p:'¥680',c:'+6.7%',up:1},
+  {n:'iPhone 15 Pro',p:'¥6,800',c:'-2.1%',up:0},
+];
+
+/* ===== 渲染首页 ===== */
+
+// 渲染热点话题列表
+function renderTopics(){
+  document.getElementById('topic-list').innerHTML = topics.map(t=>{
+    const tagClass = t.tagType==='up'?'tag-up':t.tagType==='down'?'tag-down':'tag-hot';
+    return `<div class="topic-card" onclick="nav('p-topic')">
+      <div class="topic-title"><span class="tag ${tagClass}">${t.tag}</span>${t.title}</div>
+      <div class="topic-desc">${t.desc}</div>
+      <div class="topic-meta"><span>${t.meta}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// 渲染热点宝贝价格列表
+let currentPriceTab = 'market';
+function renderPriceList(tab){
+  const list = tab==='market' ? marketItems : followItems;
+  document.getElementById('price-list').innerHTML = list.map((x,i)=>
+    `<div class="table-row" onclick="nav('p-item')"><span style="width:22px;font-size:13px;font-weight:700;color:${i<3?(x.up?'var(--red)':'var(--green)'):'var(--gray-400)'};margin-right:10px;text-align:center;flex-shrink:0;">${i+1}</span><span class="tn">${x.n}</span><span class="tp">${x.p}</span><span class="tc ${x.up?'pct-up':'pct-down'}">${x.c}</span></div>`
+  ).join('');
+}
+function switchPriceTab(tab,btn){
+  document.querySelectorAll('#price-tabs .inner-tab').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');
+  currentPriceTab = tab;
+  renderPriceList(tab);
+}
+
+// 渲染我的关注页
+function renderFollow(f){
+  let l = followItems;
+  if(f==='up') l = l.filter(x=>x.up);
+  if(f==='down') l = l.filter(x=>!x.up);
+  document.getElementById('follow-list').innerHTML = l.map(x=>
+    `<div class="table-row" onclick="nav('p-item')"><span class="tn">${x.n}</span><span class="tp">${x.p}</span><span class="tc ${x.up?'pct-up':'pct-down'}">${x.c}</span></div>`
+  ).join('');
+}
+function filterF(f,b){
+  document.querySelectorAll('#ff .filter-chip').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  renderFollow(f);
+}
+
+/* ===== 图表 ===== */
+function genD(n,b,v){const d=[b];for(let i=1;i<n;i++)d.push(d[i-1]+(Math.random()-.48)*v);return d;}
+function drawC(cv,data,color,fill){
+  if(!cv)return;
+  const ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1,r=cv.parentElement.getBoundingClientRect();
+  cv.width=r.width*dpr;cv.height=r.height*dpr;cv.style.width=r.width+'px';cv.style.height=r.height+'px';
+  ctx.scale(dpr,dpr);const w=r.width,h=r.height;ctx.clearRect(0,0,w,h);
+  const mn=Math.min(...data),mx=Math.max(...data),rng=mx-mn||1,p=6;
+  const pts=data.map((v,i)=>({x:(i/(data.length-1))*w,y:p+(1-(v-mn)/rng)*(h-p*2)}));
+  if(fill){ctx.beginPath();ctx.moveTo(pts[0].x,h);pts.forEach(pt=>ctx.lineTo(pt.x,pt.y));ctx.lineTo(pts[pts.length-1].x,h);ctx.closePath();const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,color+'20');g.addColorStop(1,color+'02');ctx.fillStyle=g;ctx.fill();}
+  ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);
+  for(let i=1;i<pts.length;i++){const xc=(pts[i-1].x+pts[i].x)/2,yc=(pts[i-1].y+pts[i].y)/2;ctx.quadraticCurveTo(pts[i-1].x,pts[i-1].y,xc,yc);}
+  ctx.lineTo(pts[pts.length-1].x,pts[pts.length-1].y);ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.stroke();
+  const last=pts[pts.length-1];ctx.beginPath();ctx.arc(last.x,last.y,3,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
+}
+function redraw(id,days,btn){
+  btn.parentElement.querySelectorAll('.period-tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const m={tc:{b:580,v:15,c:'#FF4D4F'},ic:{b:400,v:12,c:'#52C41A'}};
+  const cfg=m[id]||m.tc;
+  drawC(document.getElementById(id),genD(days,cfg.b,cfg.v),cfg.c,true);
+}
+
+/* ===== 导航 ===== */
+let stack=['p-home'];
+function nav(id){
+  const cur=document.getElementById(stack[stack.length-1]);
+  if(cur){cur.classList.remove('active');cur.classList.add('behind');}
+  const next=document.getElementById(id);
+  next.classList.remove('behind','base');void next.offsetWidth;next.classList.add('active');
+  stack.push(id);
+  setTimeout(()=>{
+    const charts={
+      'p-topic':()=>drawC(document.getElementById('tc'),genD(30,580,15),'#FF4D4F',true),
+      'p-item':()=>drawC(document.getElementById('ic'),genD(30,400,12),'#52C41A',true),
+      'p-product':()=>drawC(document.getElementById('pc'),genD(20,450,18),'#FF4D4F',true),
+    };
+    if(charts[id])charts[id]();
+  },120);
+}
+function goBack(){
+  if(stack.length<=1)return;
+  const cur=document.getElementById(stack.pop());
+  cur.classList.remove('active');
+  setTimeout(()=>cur.classList.remove('behind','base'),350);
+  const prev=document.getElementById(stack[stack.length-1]);
+  prev.classList.remove('behind');prev.classList.add('active','base');
+}
+
+/* ===== 初始化 ===== */
+renderTopics();
+renderPriceList('market');
+renderFollow('all');
+</script>
+</body>
+</html>
