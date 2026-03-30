@@ -4,85 +4,90 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>热点首页</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
-:root{--y:#FFE400;--yl:#FFF8D6;--yd:#D4C200;--r:#FF4D4F;--rb:#FFF0F0;--g:#52C41A;--gb:#F0FFF0;--bk:#1A1A1A;--g9:#333;--g7:#666;--g5:#999;--g4:#B0B0B0;--g3:#D9D9D9;--g2:#E8E8E8;--g1:#F5F5F5;--w:#fff;--f:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;--m:'DM Mono',Menlo,monospace}
+:root{
+  --y:#FFD700;--yl:#FFF8E1;--yd:#FFC700;--r:#FF4D4F;--rb:#FFF1F0;--g:#52C41A;--gb:#F6FFED;
+  --bk:#000000;--g9:#333;--g7:#666;--g5:#999;--g4:#BBBBBB;--g3:#DDDDDD;--g2:#EEEEEE;--g1:#F5F5F5;--g50:#FAFAFA;--w:#fff;
+  --f:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;--m:'SF Mono','DIN Alternate',Menlo,monospace;
+  --fs-xs:10px;--fs-sm:11px;--fs-md:12px;--fs-base:13px;--fs-lg:14px;--fs-xl:15px;--fs-2xl:16px;
+  --space-xs:4px;--space-sm:6px;--space-md:8px;--space-base:12px;--space-lg:16px;--space-xl:20px;
+  --radius-sm:4px;--radius-md:8px;--radius-lg:12px;--radius-full:999px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.04);--shadow-md:0 2px 8px rgba(0,0,0,.06);
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:var(--f);background:#E8E4E0;display:flex;justify-content:center;align-items:center;min-height:100vh}
-.phone{width:375px;height:812px;background:var(--w);border-radius:44px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 100px rgba(0,0,0,.3),0 0 0 3px #1a1a1a,inset 0 0 0 1px rgba(255,255,255,.05)}
+body{font-family:var(--f);background:#E8E8E8;display:flex;justify-content:center;align-items:center;min-height:100vh;-webkit-font-smoothing:antialiased}
+.phone{width:375px;height:812px;background:var(--g1);border-radius:40px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25),0 0 0 2px #222}
 @media(max-width:420px){body{background:var(--w)}.phone{width:100vw;height:100dvh;border-radius:0;box-shadow:none}}
 
-/* Status Bar */
-.status{height:44px;display:flex;align-items:center;justify-content:space-between;padding:14px 24px 0;font-size:15px;font-weight:600;flex-shrink:0}
+.status{height:44px;display:flex;align-items:center;justify-content:space-between;padding:12px 20px 0;font-size:var(--fs-lg);font-weight:600;color:var(--bk);background:var(--y);flex-shrink:0}
 .status .icons{display:flex;gap:5px;align-items:center}
 .status .icons svg{width:16px;height:14px}
 
-/* Search */
-.search-bar{padding:6px 16px 8px;flex-shrink:0}
-.search-pill{display:flex;align-items:center;gap:8px;background:var(--g1);border-radius:20px;height:34px;padding:0 14px}
-.search-pill svg{width:14px;height:14px;color:var(--g4);flex-shrink:0}
-.search-pill span{font-size:13px;color:var(--g4)}
+.search-bar{padding:var(--space-md) var(--space-lg) var(--space-sm);flex-shrink:0;background:var(--y)}
+.search-pill{display:flex;align-items:center;gap:var(--space-md);background:rgba(255,255,255,.85);border-radius:var(--radius-full);height:32px;padding:0 var(--space-base);transition:background .2s}
+.search-pill:active{background:rgba(255,255,255,.95)}
+.search-pill svg{width:14px;height:14px;color:rgba(0,0,0,.35);flex-shrink:0}
+.search-pill span{font-size:var(--fs-md);color:rgba(0,0,0,.3);letter-spacing:.3px}
 
-/* App Tabs */
-.app-tabs{display:flex;padding:0 6px;border-bottom:1px solid var(--g1);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.app-tabs{display:flex;padding:0 var(--space-md);flex-shrink:0;overflow-x:auto;scrollbar-width:none;background:var(--y);padding-bottom:2px}
 .app-tabs::-webkit-scrollbar{display:none}
-.app-tab{flex-shrink:0;padding:10px 13px;font-size:13px;color:var(--g5);cursor:pointer;position:relative;border:none;background:none;font-family:var(--f);white-space:nowrap}
-.app-tab.on{color:var(--bk);font-weight:700}
-.app-tab.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:18px;height:3px;background:var(--y);border-radius:2px}
+.app-tab{flex-shrink:0;padding:10px var(--space-base);font-size:var(--fs-lg);color:rgba(0,0,0,.45);cursor:pointer;position:relative;border:none;background:none;font-family:var(--f);white-space:nowrap;transition:all .2s;font-weight:500;letter-spacing:.3px}
+.app-tab.on{color:var(--bk);font-weight:700;font-size:var(--fs-xl)}
+.app-tab.on::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:18px;height:3px;background:var(--bk);border-radius:2px}
 
-/* Scroll */
-.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:var(--g1)}
 .scroll::-webkit-scrollbar{display:none}
 
-/* Section Head */
-.sh{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px}
-.sh .sl{font-size:15px;font-weight:700;color:var(--bk)}
-.sh .sr{font-size:11px;color:var(--g5)}
+.card-section{margin:var(--space-md) var(--space-base) 0;background:var(--w);border-radius:var(--radius-lg);overflow:hidden}
 
-/* Topic Card */
-.tc{padding:12px 16px;border-bottom:1px solid var(--g1);cursor:pointer;transition:background .1s}
-.tc:active{background:var(--g1)}
-.tc .th{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:14px;font-weight:600;color:var(--bk);line-height:1.4}
-.tc .tag{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600;flex-shrink:0;white-space:nowrap}
+.brand-head{display:flex;align-items:center;gap:var(--space-sm);padding:var(--space-base) var(--space-base) var(--space-xs)}
+.brand-head .brand-dot{width:6px;height:6px;border-radius:50%;background:var(--y)}
+.brand-head .brand-title{font-size:var(--fs-xl);font-weight:700;color:var(--bk)}
+.brand-head .brand-sub{font-size:var(--fs-xs);color:var(--g4);margin-left:auto}
+
+.tc{padding:var(--space-sm) var(--space-base);border-bottom:1px solid var(--g1);cursor:pointer;transition:background .15s;background:var(--w)}
+.tc:last-child{border-bottom:none}
+.tc:active{background:var(--g50)}
+.tc .th{display:flex;align-items:center;gap:var(--space-sm);margin-bottom:var(--space-xs);font-size:var(--fs-lg);font-weight:600;color:var(--bk);line-height:1.5}
+.tc .tag{font-size:var(--fs-xs);padding:2px var(--space-sm);border-radius:var(--radius-sm);font-weight:600;flex-shrink:0;white-space:nowrap}
 .tag-up{background:var(--rb);color:var(--r)}
 .tag-dn{background:var(--gb);color:var(--g)}
-.tag-ev{background:var(--yl);color:#9A7800}
-.tc .td{font-size:12px;color:var(--g7);line-height:1.5;margin-bottom:4px}
-.tc .tm{font-size:11px;color:var(--g5)}
+.tag-ev{background:var(--yl);color:#B8860B}
+.tc .td{font-size:var(--fs-md);color:var(--g7);line-height:1.6;margin-bottom:var(--space-xs)}
+.tc .tm{font-size:var(--fs-sm);color:var(--g4)}
 
-/* Inner Tabs */
-.itabs{display:flex;padding:0 16px;background:var(--w)}
-.itab{padding:10px 0;margin-right:24px;font-size:14px;color:var(--g5);cursor:pointer;border:none;background:none;font-family:var(--f);position:relative}
-.itab.on{color:var(--bk);font-weight:700}
-.itab.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:2.5px;background:var(--y);border-radius:2px}
+.itabs{display:flex;padding:0 var(--space-base);background:var(--w);flex-shrink:0}
+.itab{padding:var(--space-md) 0;margin-right:var(--space-xl);font-size:var(--fs-lg);color:var(--g5);cursor:pointer;border:none;background:none;font-family:var(--f);position:relative;transition:color .2s;font-weight:500}
+.itab.on{color:var(--bk);font-weight:600}
+.itab.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:3px;background:var(--y);border-radius:2px}
 
-/* Table */
-.thead{display:flex;padding:6px 16px;background:var(--g1);font-size:11px;color:var(--g5)}
+.thead{display:flex;padding:var(--space-sm) var(--space-base);background:var(--w);font-size:var(--fs-sm);color:var(--g4);flex-shrink:0;border-bottom:1px solid var(--g1)}
 .thead .c1{flex:1}.thead .c2{width:80px;text-align:right}.thead .c3{width:56px;text-align:right}
-.trow{display:flex;align-items:center;padding:11px 16px;border-bottom:1px solid var(--g1);cursor:pointer;transition:background .1s}
-.trow:active{background:var(--g1)}
-.trow .rk{width:22px;font-size:13px;font-weight:700;text-align:center;margin-right:8px;flex-shrink:0}
-.trow .tn{flex:1;font-size:13px;font-weight:500;color:var(--bk);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.trow .tp{width:80px;text-align:right;font-family:var(--m);font-size:13px;color:var(--bk)}
-.trow .tc2{width:56px;text-align:right;font-family:var(--m);font-size:12px;font-weight:500}
+.trow{display:flex;align-items:center;padding:var(--space-base) var(--space-base);border-bottom:1px solid var(--g1);cursor:pointer;transition:background .15s;background:var(--w)}
+.trow:last-child{border-bottom:none}
+.trow:active{background:var(--g50)}
+.trow .rk{width:22px;font-size:var(--fs-base);font-weight:700;text-align:center;margin-right:var(--space-sm);flex-shrink:0}
+.trow .tn{flex:1;font-size:var(--fs-lg);font-weight:500;color:var(--bk);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trow .tp{width:80px;text-align:right;font-family:var(--m);font-size:var(--fs-md);color:var(--bk)}
+.trow .tc2{width:56px;text-align:right;font-family:var(--m);font-size:var(--fs-md);font-weight:500}
 .up{color:var(--r)}.dn{color:var(--g)}
 
-/* Bottom Bar */
-.bbar{display:flex;padding:6px 0 24px;border-top:1px solid var(--g1);flex-shrink:0;background:var(--w)}
-.bt{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none;font-family:var(--f);cursor:pointer}
+.bbar{display:flex;padding:var(--space-sm) 0 20px;border-top:1px solid var(--g2);flex-shrink:0;background:var(--w)}
+.bt{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none;font-family:var(--f);cursor:pointer;transition:transform .15s}
+.bt:active{transform:scale(.9)}
 .bt svg{width:22px;height:22px;color:var(--g4)}
-.bt span{font-size:10px;color:var(--g5)}
+.bt span{font-size:var(--fs-xs);color:var(--g5)}
 .bt.on svg{color:var(--bk)}
-.bt.on span{color:var(--bk);font-weight:700}
-.bt.pub .pi{width:38px;height:38px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;margin-top:-10px;box-shadow:0 2px 8px rgba(255,228,0,.45)}
-.bt.pub .pi svg{color:var(--bk);width:18px;height:18px}
+.bt.on span{color:var(--bk);font-weight:600}
+.bt.pub .pi{width:40px;height:40px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;margin-top:-10px;box-shadow:0 4px 12px rgba(255,215,0,.4)}
+.bt.pub .pi svg{color:var(--bk);width:20px;height:20px}
 </style>
 </head>
 <body>
 <div class="phone">
   <div class="status"><span>9:41</span><div class="icons"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.24 4.24 0 00-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg></div></div>
 
-  <div class="search-bar"><div class="search-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span>搜索</span></div></div>
+  <div class="search-bar"><div class="search-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span>搜索热点宝贝、话题</span></div></div>
 
   <div class="app-tabs">
     <button class="app-tab">逛逛神器</button>
@@ -94,38 +99,37 @@ body{font-family:var(--f);background:#E8E4E0;display:flex;justify-content:center
   </div>
 
   <div class="scroll">
-    <!-- 热点话题 -->
-    <div class="sh"><span class="sl">热点话题</span><span class="sr">由宝贝价格信号生成</span></div>
+    <div class="card-section">
+      <div class="brand-head"><span class="brand-dot"></span><span class="brand-title">热点话题</span><span class="brand-sub">由宝贝价格信号生成</span></div>
+      <div class="tc">
+        <div class="th"><span class="tag tag-up">涨价行情</span>#耐克华夫饼跑鞋 闲鱼价一周涨5.8%</div>
+        <div class="td">复古跑鞋品类需求上升，社媒穿搭博主带火"复古运动风"，供需比降至0.7</div>
+        <div class="tm">3个关联宝贝 · 搜索↑32%</div>
+      </div>
+      <div class="tc">
+        <div class="th"><span class="tag tag-dn">跌价行情</span>#Cracle Coin 限定宝盒 价格回调</div>
+        <div class="td">新品上市后首批溢价空间消化，市场回归理性定价</div>
+        <div class="tm">1个关联宝贝 · 供需比1.2</div>
+      </div>
+      <div class="tc">
+        <div class="th"><span class="tag tag-up">涨价行情</span>#Nintendo Switch 停产消息推高二手价</div>
+        <div class="td">任天堂宣布停产消息，二手供给收紧，价格快速上涨</div>
+        <div class="tm">2个关联宝贝 · 搜索↑89%</div>
+      </div>
+      <div class="tc">
+        <div class="th"><span class="tag tag-ev">事件行情</span>#AirPods Pro 2 新款发布旧款升温</div>
+        <div class="td">新款发布带动旧款需求，性价比优势凸显</div>
+        <div class="tm">1个关联宝贝 · 搜索↑15%</div>
+      </div>
+      <div class="tc">
+        <div class="th"><span class="tag tag-dn">跌价行情</span>#iPhone 15 Pro 进入贬值周期</div>
+        <div class="td">iPhone 17系列发布在即，旧款开始进入贬值通道</div>
+        <div class="tm">1个关联宝贝 · 供需比1.4</div>
+      </div>
+    </div>
 
-    <div class="tc">
-      <div class="th"><span class="tag tag-up">涨价行情</span>#耐克华夫饼跑鞋 闲鱼价一周涨5.8%</div>
-      <div class="td">复古跑鞋品类需求上升，社媒穿搭博主带火"复古运动风"，供需比降至0.7</div>
-      <div class="tm">3个关联宝贝 · 搜索↑32%</div>
-    </div>
-    <div class="tc">
-      <div class="th"><span class="tag tag-dn">跌价行情</span>#Cracle Coin 限定宝盒 价格回调</div>
-      <div class="td">新品上市后首批溢价空间消化，市场回归理性定价</div>
-      <div class="tm">1个关联宝贝 · 供需比1.2</div>
-    </div>
-    <div class="tc">
-      <div class="th"><span class="tag tag-up">涨价行情</span>#Nintendo Switch 停产消息推高二手价</div>
-      <div class="td">任天堂宣布停产消息，二手供给收紧，价格快速上涨</div>
-      <div class="tm">2个关联宝贝 · 搜索↑89%</div>
-    </div>
-    <div class="tc">
-      <div class="th"><span class="tag tag-ev">事件行情</span>#AirPods Pro 2 新款发布旧款升温</div>
-      <div class="td">新款发布带动旧款需求，性价比优势凸显</div>
-      <div class="tm">1个关联宝贝 · 搜索↑15%</div>
-    </div>
-    <div class="tc">
-      <div class="th"><span class="tag tag-dn">跌价行情</span>#iPhone 15 Pro 进入贬值周期</div>
-      <div class="td">iPhone 17系列发布在即，旧款开始进入贬值通道</div>
-      <div class="tm">1个关联宝贝 · 供需比1.4</div>
-    </div>
-
-    <!-- 热点宝贝价格 -->
-    <div style="border-top:8px solid var(--g1)">
-      <div class="sh" style="padding-bottom:0"><span class="sl">热点宝贝价格</span></div>
+    <div class="card-section" style="margin-bottom:var(--space-base);">
+      <div class="brand-head"><span class="brand-dot"></span><span class="brand-title">热点宝贝价格</span></div>
       <div class="itabs">
         <button class="itab on" onclick="sw('mkt',this)">市场价格</button>
         <button class="itab" onclick="sw('fol',this)">我的关注</button>

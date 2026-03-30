@@ -5,158 +5,232 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>热点 - 闲鱼价行情中心</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
 :root {
-  --yellow:#FFE400; --yellow-dark:#E6CD00; --yellow-light:#FFF8D6;
-  --black:#1A1A1A; --gray-900:#333; --gray-700:#666; --gray-500:#999; --gray-400:#B0B0B0; --gray-300:#D9D9D9; --gray-200:#E8E8E8; --gray-100:#F5F5F5;
-  --white:#fff;
-  --red:#FF4D4F; --red-bg:#FFF0F0;
-  --green:#52C41A; --green-bg:#F0FFF0;
-  --font:'Noto Sans SC',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
-  --mono:'DM Mono',Menlo,monospace;
+  /* 闲鱼品牌色 - 严格对齐设计图 */
+  --yellow:#FFD700; --yellow-dark:#FFC700; --yellow-light:#FFF8E1; --yellow-lighter:#FFFDF5;
+  --black:#000000; --gray-900:#333333; --gray-700:#666666; --gray-500:#999999; --gray-400:#BBBBBB; --gray-300:#DDDDDD; --gray-200:#EEEEEE; --gray-100:#F5F5F5; --gray-50:#FAFAFA;
+  --white:#FFFFFF;
+  --red:#FF4D4F; --red-light:#FF7875; --red-bg:#FFF1F0;
+  --green:#52C41A; --green-light:#73D13D; --green-bg:#F6FFED;
+  --orange:#FA8C16; --orange-bg:#FFF7E6;
+  --purple:#7C5CFC; --purple-light:#9B7CFC; --purple-bg:#F8F6FF;
+  
+  /* 字体系统 - 使用系统字体，对齐闲鱼 */
+  --font:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;
+  --mono:'SF Mono','DIN Alternate',Menlo,monospace;
+  
+  /* 字号层级 - 对齐闲鱼设计规范 */
+  --fs-xs:10px; --fs-sm:11px; --fs-md:12px; --fs-base:13px; --fs-lg:14px; --fs-xl:15px; --fs-2xl:16px; --fs-3xl:18px; --fs-4xl:20px;
+  
+  /* 间距系统 - 对齐闲鱼设计规范 */
+  --space-xs:4px; --space-sm:6px; --space-md:8px; --space-base:12px; --space-lg:16px; --space-xl:20px; --space-2xl:24px;
+  
+  /* 圆角 - 对齐闲鱼设计规范 */
+  --radius-sm:4px; --radius-md:8px; --radius-lg:12px; --radius-xl:16px; --radius-full:999px;
+  
+  /* 阴影 */
+  --shadow-sm:0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 2px 8px rgba(0,0,0,.06);
+  --shadow-lg:0 4px 16px rgba(0,0,0,.1);
+  
+  /* 行高 - 对齐闲鱼设计规范 */
+  --leading-tight:1.35;
+  --leading-normal:1.5;
+  --leading-relaxed:1.6;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:var(--font);background:#E0E0E0;display:flex;justify-content:center;align-items:center;min-height:100vh;overflow:hidden;}
-.phone{width:375px;height:812px;background:var(--white);border-radius:44px;overflow:hidden;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.35),0 0 0 3px #222,inset 0 0 0 1px rgba(255,255,255,.05);}
+body{font-family:var(--font);background:#E8E8E8;display:flex;justify-content:center;align-items:center;min-height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+.phone{width:375px;height:812px;background:var(--gray-100);border-radius:40px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.25),0 0 0 2px #222;}
 @media(max-width:420px){body{background:var(--white);}.phone{width:100vw;height:100dvh;border-radius:0;box-shadow:none;}}
 
-.statusbar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:14px 20px 0;font-size:15px;font-weight:600;background:var(--white);position:relative;z-index:100;}
+/* 状态栏 - 闲鱼黄色顶部 */
+.statusbar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:12px 20px 0;font-size:var(--fs-lg);font-weight:600;color:var(--black);background:var(--yellow);position:relative;z-index:100;}
 .statusbar .r{display:flex;gap:4px;align-items:center;}
 .statusbar .r svg{width:16px;height:14px;}
 
-.page{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--white);transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);z-index:1;display:flex;flex-direction:column;overflow:hidden;}
+/* 页面切换动画 */
+.page{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--gray-100);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:1;display:flex;flex-direction:column;overflow:hidden;}
 .page.active{transform:translateX(0);z-index:10;}
-.page.behind{transform:translateX(-28%);z-index:5;}
+.page.behind{transform:translateX(-25%);z-index:5;border-radius:12px;overflow:hidden;}
 .page.base{transform:translateX(0);z-index:1;}
 
-.app-tabs{display:flex;align-items:center;background:var(--white);padding:0 4px;overflow-x:auto;border-bottom:1px solid var(--gray-100);}
+/* 搜索栏 - 黄色背景上的半透明白色搜索框 */
+.search-bar{padding:var(--space-md) var(--space-lg) var(--space-sm);background:var(--yellow);flex-shrink:0;}
+.search-pill{display:flex;align-items:center;gap:var(--space-md);background:rgba(255,255,255,.85);border-radius:var(--radius-full);height:32px;padding:0 var(--space-base);transition:background .2s;}
+.search-pill:active{background:rgba(255,255,255,.95);}
+.search-pill svg{width:14px;height:14px;color:rgba(0,0,0,.35);flex-shrink:0;}
+.search-pill span{font-size:var(--fs-md);color:rgba(0,0,0,.3);letter-spacing:.3px;}
+
+/* 顶部 Tab 导航 - 黄色背景，黑色活跃指示器 */
+.app-tabs{display:flex;align-items:center;background:var(--yellow);padding:0 var(--space-md);overflow-x:auto;border-bottom:none;flex-shrink:0;padding-bottom:2px;}
 .app-tabs::-webkit-scrollbar{display:none;}
-.app-tab{flex-shrink:0;padding:10px 12px;font-size:13px;color:var(--gray-500);cursor:pointer;position:relative;border:none;background:none;font-family:var(--font);white-space:nowrap;}
-.app-tab.active{color:var(--black);font-weight:700;}
-.app-tab.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:18px;height:3px;background:var(--yellow);border-radius:2px;}
+.app-tab{flex-shrink:0;padding:10px var(--space-base);font-size:var(--fs-lg);color:rgba(0,0,0,.45);cursor:pointer;position:relative;border:none;background:none;font-family:var(--font);white-space:nowrap;transition:all .2s;font-weight:500;letter-spacing:.3px;}
+.app-tab.active{color:var(--black);font-weight:700;font-size:var(--fs-xl);}
+.app-tab.active::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:18px;height:3px;background:var(--black);border-radius:2px;}
 
-.navbar{display:flex;align-items:center;height:44px;padding:0 16px;background:var(--white);}
-.navbar .back{width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:none;}
-.navbar .back svg{width:18px;height:18px;}
-.navbar .title{flex:1;text-align:center;font-size:16px;font-weight:700;color:var(--black);margin:0 8px;}
-.navbar .right{display:flex;gap:12px;align-items:center;}
-.navbar .right svg{width:20px;height:20px;color:var(--gray-500);cursor:pointer;}
-.follow-btn{border:1px solid var(--gray-300);background:var(--white);border-radius:14px;padding:4px 12px;font-size:12px;color:var(--gray-700);font-family:var(--font);cursor:pointer;}
-.follow-btn.on{border-color:var(--yellow);background:var(--yellow-light);color:var(--black);font-weight:500;}
+/* 导航栏 - 白色背景 */
+.navbar{display:flex;align-items:center;height:44px;padding:0 var(--space-lg);background:var(--white);flex-shrink:0;border-bottom:1px solid var(--gray-100);}
+.navbar .back{width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:none;border-radius:var(--radius-md);transition:background .15s;}
+.navbar .back:active{background:var(--gray-100);}
+.navbar .back svg{width:20px;height:20px;color:var(--black);}
+.navbar .title{flex:1;text-align:center;font-size:var(--fs-2xl);font-weight:600;color:var(--black);margin:0 var(--space-sm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.navbar .right{display:flex;gap:var(--space-md);align-items:center;}
+.navbar .right svg{width:20px;height:20px;color:var(--gray-700);cursor:pointer;}
+.follow-btn{border:1px solid var(--gray-300);background:var(--white);border-radius:var(--radius-full);padding:var(--space-xs) var(--space-base);font-size:var(--fs-md);color:var(--gray-700);font-family:var(--font);cursor:pointer;transition:all .2s;font-weight:500;}
+.follow-btn:active{transform:scale(.95);}
+.follow-btn.on{border-color:var(--yellow);background:var(--yellow-light);color:var(--black);font-weight:600;}
 
-.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+/* 滚动区域 - 灰色背景 */
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--gray-100);}
 .scroll::-webkit-scrollbar{display:none;}
 
-.sec-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px;background:var(--white);}
-.sec-head .label{font-size:15px;font-weight:700;color:var(--black);}
-.sec-head .more{font-size:12px;color:var(--gray-500);cursor:pointer;}
+/* 卡片化内容区块 - 闲鱼风格圆角白色卡片 */
+.card-section{margin:var(--space-md) var(--space-base) 0;background:var(--white);border-radius:var(--radius-lg);overflow:hidden;}
+.card-section:first-child{margin-top:var(--space-md);}
 
-.inner-tabs{display:flex;background:var(--white);padding:0 16px;}
-.inner-tab{padding:10px 0;margin-right:24px;font-size:14px;color:var(--gray-500);cursor:pointer;border:none;background:none;font-family:var(--font);position:relative;}
-.inner-tab.active{color:var(--black);font-weight:700;}
-.inner-tab.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:2.5px;background:var(--yellow);border-radius:2px;}
+/* 区块头部 */
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:var(--space-base) var(--space-lg) var(--space-md);background:var(--white);}
+.sec-head .label{font-size:var(--fs-2xl);font-weight:700;color:var(--black);letter-spacing:.3px;}
+.sec-head .more{font-size:var(--fs-sm);color:var(--gray-500);cursor:pointer;}
+/* 卡片内的区块头 */
+.card-section .sec-head{padding:var(--space-base) var(--space-base) var(--space-sm);}
+.card-section .sec-head .label{font-size:var(--fs-xl);}
 
-.bottom-bar{display:flex;align-items:flex-start;padding:6px 0 20px;background:var(--white);border-top:1px solid var(--gray-100);flex-shrink:0;}
-.btab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border:none;background:none;font-family:var(--font);}
+/* 品牌化标题头（闲鱼热点风格） */
+.brand-head{display:flex;align-items:center;gap:var(--space-sm);padding:var(--space-base) var(--space-base) var(--space-xs);}
+.brand-head .brand-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);}
+.brand-head .brand-title{font-size:var(--fs-xl);font-weight:700;color:var(--black);}
+.brand-head .brand-sub{font-size:var(--fs-xs);color:var(--gray-400);margin-left:auto;}
+
+/* 内部 Tab */
+.inner-tabs{display:flex;background:var(--white);padding:0 var(--space-lg);flex-shrink:0;}
+.inner-tab{padding:var(--space-md) 0;margin-right:var(--space-xl);font-size:var(--fs-lg);color:var(--gray-500);cursor:pointer;border:none;background:none;font-family:var(--font);position:relative;transition:color .2s;font-weight:500;}
+.inner-tab.active{color:var(--black);font-weight:600;}
+.inner-tab.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:3px;background:var(--yellow);border-radius:2px;}
+.card-section .inner-tabs{padding:0 var(--space-base);}
+
+/* 底部导航栏 */
+.bottom-bar{display:flex;align-items:flex-start;padding:var(--space-sm) 0 20px;background:var(--white);border-top:1px solid var(--gray-200);flex-shrink:0;}
+.btab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border:none;background:none;font-family:var(--font);transition:transform .15s;}
+.btab:active{transform:scale(.9);}
 .btab svg{width:22px;height:22px;color:var(--gray-400);}
-.btab span{font-size:10px;color:var(--gray-500);}
+.btab span{font-size:var(--fs-xs);color:var(--gray-500);}
 .btab.on svg{color:var(--black);}
-.btab.on span{color:var(--black);font-weight:700;}
-.btab.pub .pub-icon{width:36px;height:36px;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center;margin-top:-8px;box-shadow:0 2px 8px rgba(255,228,0,.4);}
-.btab.pub .pub-icon svg{color:var(--black);width:18px;height:18px;}
+.btab.on span{color:var(--black);font-weight:600;}
+.btab.pub .pub-icon{width:40px;height:40px;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center;margin-top:-10px;box-shadow:0 4px 12px rgba(255,215,0,.4);}
+.btab.pub .pub-icon svg{color:var(--black);width:20px;height:20px;}
 
-.chart-wrap{padding:0 16px 12px;background:var(--white);}
-.chart-head{display:flex;align-items:center;justify-content:space-between;padding:8px 0;margin-bottom:4px;}
-.chart-head .t{font-size:13px;font-weight:700;color:var(--black);}
+/* 图表区域 */
+.chart-wrap{padding:0 var(--space-lg) var(--space-base);background:var(--white);}
+.chart-head{display:flex;align-items:center;justify-content:space-between;padding:var(--space-base) 0;margin-bottom:var(--space-sm);}
+.chart-head .t{font-size:var(--fs-md);font-weight:600;color:var(--black);}
 .period-tabs{display:flex;}
-.period-tab{font-size:11px;padding:3px 10px;border:1px solid var(--gray-300);background:var(--white);color:var(--gray-700);cursor:pointer;font-family:var(--font);}
-.period-tab:first-child{border-radius:4px 0 0 4px;}
-.period-tab:last-child{border-radius:0 4px 4px 0;}
+.period-tab{font-size:var(--fs-xs);padding:var(--space-xs) var(--space-base);border:1px solid var(--gray-300);background:var(--white);color:var(--gray-700);cursor:pointer;font-family:var(--font);transition:all .2s;font-weight:500;}
+.period-tab:first-child{border-radius:var(--radius-sm) 0 0 var(--radius-sm);}
+.period-tab:last-child{border-radius:0 var(--radius-sm) var(--radius-sm) 0;}
 .period-tab+.period-tab{border-left:none;}
 .period-tab.on{background:var(--yellow);border-color:var(--yellow);color:var(--black);font-weight:600;}
-.canvas-box{width:100%;height:160px;}
+.canvas-box{width:100%;height:160px;background:var(--gray-50);border-radius:var(--radius-md);}
 .canvas-box canvas{width:100%;height:100%;}
 
-.analysis{padding:12px 16px;background:var(--white);border-top:8px solid var(--gray-100);}
-.analysis .a-title{font-size:14px;font-weight:700;color:var(--black);margin-bottom:8px;}
-.analysis .a-body{font-size:13px;color:var(--gray-700);line-height:1.7;}
-.analysis .a-prompt{margin-top:10px;padding:10px;background:#F8F6FF;border-radius:6px;border-left:3px solid #7C5CFC;}
-.analysis .a-prompt .p-label{font-size:10px;color:#7C5CFC;font-weight:600;margin-bottom:4px;}
-.analysis .a-prompt .p-text{font-size:11px;color:var(--gray-700);line-height:1.6;font-family:var(--mono);word-break:break-all;}
+/* 市场解读 */
+.analysis{padding:var(--space-lg);background:var(--white);border-top:var(--space-md) solid var(--gray-100);}
+.analysis .a-title{font-size:var(--fs-lg);font-weight:600;color:var(--black);margin-bottom:var(--space-md);}
+.analysis .a-body{font-size:var(--fs-base);color:var(--gray-900);line-height:var(--leading-relaxed);}
+.analysis .a-prompt{margin-top:var(--space-md);padding:var(--space-base);background:var(--purple-bg);border-radius:var(--radius-md);border-left:3px solid var(--purple);}
+.analysis .a-prompt .p-label{font-size:var(--fs-xs);color:var(--purple);font-weight:600;margin-bottom:var(--space-xs);text-transform:uppercase;letter-spacing:.5px;}
+.analysis .a-prompt .p-text{font-size:var(--fs-sm);color:var(--gray-700);line-height:var(--leading-relaxed);font-family:var(--mono);word-break:break-all;}
 
-.rules-panel{padding:12px 16px;background:var(--white);border-top:8px solid var(--gray-100);}
-.rules-panel .rp-title{font-size:13px;font-weight:700;color:var(--black);margin-bottom:8px;}
-.rule-row{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--gray-100);font-size:12px;}
+/* 规则面板 */
+.rules-panel{padding:var(--space-lg);background:var(--white);border-top:var(--space-md) solid var(--gray-100);}
+.rules-panel .rp-title{font-size:var(--fs-md);font-weight:600;color:var(--black);margin-bottom:var(--space-md);}
+.rule-row{display:flex;align-items:center;padding:var(--space-sm) 0;border-bottom:1px solid var(--gray-100);font-size:var(--fs-md);}
 .rule-row:last-child{border-bottom:none;}
-.rule-row .r-pri{width:28px;font-weight:700;color:#7C5CFC;flex-shrink:0;}
+.rule-row .r-pri{width:28px;font-weight:700;color:var(--purple);flex-shrink:0;}
 .rule-row .r-name{width:70px;font-weight:500;color:var(--black);flex-shrink:0;}
 .rule-row .r-cond{flex:1;color:var(--gray-700);}
 .rule-row .r-status{width:40px;text-align:right;flex-shrink:0;font-weight:600;}
 
-.cta-bar{display:flex;gap:8px;padding:10px 16px 24px;background:var(--white);border-top:1px solid var(--gray-100);flex-shrink:0;}
-.cta-main{flex:2;padding:12px;border-radius:10px;border:none;background:var(--yellow);color:var(--black);font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font);}
-.cta-main:active{background:var(--yellow-dark);}
-.cta-sub{flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--gray-300);background:var(--white);color:var(--gray-700);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);}
+/* CTA 按钮组 */
+.cta-bar{display:flex;gap:var(--space-md);padding:var(--space-base) var(--space-lg) 24px;background:var(--white);border-top:1px solid var(--gray-200);flex-shrink:0;}
+.cta-main{flex:2;padding:var(--space-base) var(--space-lg);border-radius:var(--radius-full);border:none;background:var(--yellow);color:var(--black);font-size:var(--fs-xl);font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;}
+.cta-main:active{transform:translateY(1px);background:var(--yellow-dark);}
+.cta-sub{flex:1;padding:var(--space-base);border-radius:var(--radius-full);border:1.5px solid var(--gray-300);background:var(--white);color:var(--gray-700);font-size:var(--fs-base);font-weight:500;cursor:pointer;font-family:var(--font);transition:all .2s;}
+.cta-sub:active{background:var(--gray-100);}
 
-.list-row{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;background:var(--white);transition:background .12s;}
-.list-row:active{background:var(--gray-100);}
+/* 列表行 */
+.list-row{display:flex;align-items:center;padding:var(--space-base) var(--space-lg);border-bottom:1px solid var(--gray-100);cursor:pointer;background:var(--white);transition:background .15s;}
+.list-row:last-child{border-bottom:none;}
+.list-row:active{background:var(--gray-50);}
 .list-row .info{flex:1;min-width:0;}
-.list-row .info .name{font-size:14px;font-weight:500;color:var(--black);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.list-row .info .sub{font-size:11px;color:var(--gray-500);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.list-row .val{text-align:right;margin-left:12px;flex-shrink:0;}
-.list-row .val .price{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--black);}
-.list-row .val .pct{font-family:var(--mono);font-size:12px;font-weight:500;margin-top:1px;}
+.list-row .info .name{font-size:var(--fs-lg);font-weight:500;color:var(--black);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.list-row .info .sub{font-size:var(--fs-sm);color:var(--gray-500);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.list-row .val{text-align:right;margin-left:var(--space-base);flex-shrink:0;}
+.list-row .val .price{font-family:var(--mono);font-size:var(--fs-lg);font-weight:500;color:var(--black);}
+.list-row .val .pct{font-family:var(--mono);font-size:var(--fs-md);font-weight:500;margin-top:1px;}
 .pct-up{color:var(--red);}
 .pct-down{color:var(--green);}
 
-.table-head{display:flex;align-items:center;padding:6px 16px;background:var(--gray-100);font-size:11px;color:var(--gray-500);}
+/* 表头 */
+.table-head{display:flex;align-items:center;padding:var(--space-sm) var(--space-lg);background:var(--white);font-size:var(--fs-sm);color:var(--gray-400);flex-shrink:0;border-bottom:1px solid var(--gray-100);}
 .table-head .th-n{flex:1;}.table-head .th-p{width:80px;text-align:right;}.table-head .th-c{width:60px;text-align:right;}
+.card-section .table-head{padding:var(--space-sm) var(--space-base);}
 
-.table-row{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;background:var(--white);}
-.table-row:active{background:var(--gray-100);}
-.table-row .tn{flex:1;font-size:14px;font-weight:500;color:var(--black);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.table-row .tp{width:80px;text-align:right;font-family:var(--mono);font-size:13px;color:var(--black);}
-.table-row .tc{width:60px;text-align:right;font-family:var(--mono);font-size:13px;font-weight:500;}
+/* 表格行 */
+.table-row{display:flex;align-items:center;padding:var(--space-base) var(--space-lg);border-bottom:1px solid var(--gray-100);cursor:pointer;background:var(--white);transition:background .15s;}
+.table-row:last-child{border-bottom:none;}
+.table-row:active{background:var(--gray-50);}
+.table-row .tn{flex:1;font-size:var(--fs-lg);font-weight:500;color:var(--black);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.table-row .tp{width:80px;text-align:right;font-family:var(--mono);font-size:var(--fs-md);color:var(--black);}
+.table-row .tc{width:60px;text-align:right;font-family:var(--mono);font-size:var(--fs-md);font-weight:500;}
+.card-section .table-row{padding:var(--space-base) var(--space-base);}
 
-.filter-bar{display:flex;gap:8px;padding:8px 16px;background:var(--white);border-bottom:1px solid var(--gray-100);}
-.filter-chip{padding:4px 14px;border-radius:14px;font-size:12px;color:var(--gray-700);background:var(--gray-100);border:none;cursor:pointer;font-family:var(--font);}
-.filter-chip.on{background:var(--black);color:var(--white);font-weight:500;}
+/* 筛选栏 */
+.filter-bar{display:flex;gap:var(--space-md);padding:var(--space-md) var(--space-lg);background:var(--white);border-bottom:1px solid var(--gray-100);flex-shrink:0;}
+.filter-chip{padding:var(--space-xs) var(--space-lg);border-radius:var(--radius-full);font-size:var(--fs-md);color:var(--gray-700);background:var(--gray-100);border:none;cursor:pointer;font-family:var(--font);font-weight:500;transition:all .2s;}
+.filter-chip:active{transform:scale(.95);}
+.filter-chip.on{background:var(--black);color:var(--white);font-weight:600;}
 
-.overview-bar{padding:8px 16px;background:var(--white);font-size:12px;color:var(--gray-500);border-bottom:1px solid var(--gray-100);}
+/* 概览栏 */
+.overview-bar{padding:var(--space-md) var(--space-lg);background:var(--white);font-size:var(--fs-md);color:var(--gray-500);border-bottom:1px solid var(--gray-100);flex-shrink:0;}
 .overview-bar .uc{color:var(--red);font-weight:600;}
 .overview-bar .dc{color:var(--green);font-weight:600;}
 
-.sku-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--gray-100);}
-.sku-row .sku-tag{font-size:12px;background:var(--gray-100);padding:3px 10px;border-radius:4px;color:var(--gray-700);margin-right:12px;flex-shrink:0;}
-.sku-row .sku-price{flex:1;font-family:var(--mono);font-size:14px;font-weight:500;}
-.sku-row .sku-pct{font-family:var(--mono);font-size:12px;padding:2px 6px;border-radius:4px;}
+/* SKU 行 */
+.sku-row{display:flex;align-items:center;padding:var(--space-base) var(--space-lg);border-bottom:1px solid var(--gray-100);background:var(--white);}
+.sku-row:last-child{border-bottom:none;}
+.sku-row .sku-tag{font-size:var(--fs-md);background:var(--gray-100);padding:var(--space-xs) var(--space-base);border-radius:var(--radius-sm);color:var(--gray-700);margin-right:var(--space-base);flex-shrink:0;}
+.sku-row .sku-price{flex:1;font-family:var(--mono);font-size:var(--fs-lg);font-weight:500;}
+.sku-row .sku-pct{font-family:var(--mono);font-size:var(--fs-md);padding:2px var(--space-sm);border-radius:var(--radius-sm);}
 
-.pd-img{width:100%;height:300px;background:linear-gradient(145deg,#f0ece4,#e0d8cc);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
-.pd-img .bf{position:absolute;top:50px;left:14px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;z-index:10;}
+/* 商品图片区域 */
+.pd-img{width:100%;height:300px;background:linear-gradient(145deg,#f5f0e8,#e8e0d5);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.pd-img .bf{position:absolute;top:52px;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.35);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;z-index:10;transition:all .2s;}
+.pd-img .bf:active{transform:scale(.9);}
 .pd-img .bf svg{width:18px;height:18px;color:#fff;}
 
-.tc-card{margin:8px 16px 12px;padding:12px;border:1px solid var(--gray-200);border-radius:10px;background:var(--white);cursor:pointer;}
-.tc-card:active{background:var(--gray-100);}
-.tc-card .tch{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.tc-card .tcl{font-size:13px;font-weight:600;color:var(--black);display:flex;align-items:center;gap:6px;}
+/* 趋势卡片 */
+.tc-card{margin:var(--space-md) var(--space-lg) var(--space-base);padding:var(--space-base);border:1px solid var(--gray-200);border-radius:var(--radius-md);background:var(--white);cursor:pointer;transition:all .2s;box-shadow:var(--shadow-sm);}
+.tc-card:active{background:var(--gray-50);transform:translateY(1px);}
+.tc-card .tch{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-md);}
+.tc-card .tcl{font-size:var(--fs-md);font-weight:600;color:var(--black);display:flex;align-items:center;gap:var(--space-sm);}
 .tc-card .tcl .dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);}
-.tc-card .tcc{width:100%;height:50px;margin-bottom:6px;}
-.tc-card .tcf{display:flex;justify-content:space-between;font-size:11px;color:var(--gray-500);}
+.tc-card .tcc{width:100%;height:50px;margin-bottom:var(--space-sm);border-radius:var(--radius-sm);overflow:hidden;}
+.tc-card .tcf{display:flex;justify-content:space-between;font-size:var(--fs-sm);color:var(--gray-500);}
 .tc-card .tcf .tv{font-family:var(--mono);font-weight:500;color:var(--black);}
 
 /* 热点话题卡片 */
-.topic-card{padding:12px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;background:var(--white);transition:background .12s;}
-.topic-card:active{background:var(--gray-100);}
-.topic-card .topic-title{font-size:14px;font-weight:700;color:var(--black);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
-.topic-card .topic-title .tag{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600;}
+.topic-card{padding:var(--space-base) var(--space-lg);border-bottom:1px solid var(--gray-100);cursor:pointer;background:var(--white);transition:background .15s;}
+.topic-card:last-child{border-bottom:none;}
+.topic-card:active{background:var(--gray-50);}
+.topic-card .topic-title{font-size:var(--fs-lg);font-weight:600;color:var(--black);margin-bottom:var(--space-xs);display:flex;align-items:center;gap:var(--space-sm);line-height:var(--leading-normal);}
+.topic-card .topic-title .tag{font-size:var(--fs-xs);padding:2px var(--space-sm);border-radius:var(--radius-sm);font-weight:600;flex-shrink:0;}
 .topic-card .topic-title .tag-up{background:var(--red-bg);color:var(--red);}
 .topic-card .topic-title .tag-down{background:var(--green-bg);color:var(--green);}
 .topic-card .topic-title .tag-hot{background:var(--yellow-light);color:#B8860B;}
-.topic-card .topic-desc{font-size:12px;color:var(--gray-700);line-height:1.5;margin-bottom:6px;}
-.topic-card .topic-meta{font-size:11px;color:var(--gray-500);display:flex;gap:12px;}
-
-.formula-bar{margin:0 16px 10px;padding:10px 12px;background:var(--gray-100);border-radius:8px;font-size:11px;color:var(--gray-700);line-height:1.5;font-family:var(--mono);}
-.formula-bar strong{color:var(--black);}
+.topic-card .topic-desc{font-size:var(--fs-md);color:var(--gray-700);line-height:var(--leading-relaxed);margin-bottom:var(--space-xs);}
+.topic-card .topic-meta{font-size:var(--fs-sm);color:var(--gray-400);display:flex;gap:var(--space-md);}
+.card-section .topic-card{padding:var(--space-sm) var(--space-base);}
 </style>
 </head>
 <body>
@@ -165,17 +239,19 @@ body{font-family:var(--font);background:#E0E0E0;display:flex;justify-content:cen
 <!-- ===== PAGE 1: 热点首页 ===== -->
 <div class="page base active" id="p-home">
   <div class="statusbar"><span>9:41</span><div class="r"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.24 4.24 0 00-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg></div></div>
-  <div style="padding:4px 12px 6px;background:var(--white);"><div style="display:flex;align-items:center;gap:8px;background:var(--gray-100);border-radius:18px;height:32px;padding:0 12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span style="font-size:13px;color:var(--gray-400);">搜索</span></div></div>
+  <div class="search-bar"><div class="search-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span>搜索热点宝贝、话题</span></div></div>
   <div class="app-tabs"><button class="app-tab">逛逛神器</button><button class="app-tab">找服务</button><button class="app-tab active">热点</button><button class="app-tab">游戏</button><button class="app-tab">数码</button><button class="app-tab">玩乐</button></div>
 
   <div class="scroll" id="home-scroll">
-    <!-- 上半部分：热点话题 -->
-    <div class="sec-head"><span class="label">热点话题</span><span class="more">由热点宝贝价格信号生成</span></div>
-    <div id="topic-list"></div>
+    <!-- 上半部分:热点话题 - 卡片化 -->
+    <div class="card-section">
+      <div class="brand-head"><span class="brand-dot"></span><span class="brand-title">热点话题</span><span class="brand-sub">由热点宝贝价格信号生成</span></div>
+      <div id="topic-list"></div>
+    </div>
 
-    <!-- 下半部分：热点宝贝价格 -->
-    <div style="border-top:8px solid var(--gray-100);">
-      <div class="sec-head" style="padding-bottom:0;"><span class="label">热点宝贝价格</span></div>
+    <!-- 下半部分:热点宝贝价格 - 卡片化 -->
+    <div class="card-section" style="margin-bottom:var(--space-base);">
+      <div class="brand-head"><span class="brand-dot"></span><span class="brand-title">热点宝贝价格</span></div>
       <div class="inner-tabs" id="price-tabs">
         <button class="inner-tab active" onclick="switchPriceTab('market',this)">市场价格</button>
         <button class="inner-tab" onclick="switchPriceTab('follow',this)">我的关注</button>
@@ -197,7 +273,7 @@ body{font-family:var(--font);background:#E0E0E0;display:flex;justify-content:cen
 <!-- ===== PAGE 2: 我的关注 ===== -->
 <div class="page" id="p-follow">
   <div class="statusbar"><span>9:41</span><div class="r"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.24 4.24 0 00-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg></div></div>
-  <div class="navbar"><button class="back" onclick="goBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button><span class="title">我的关注</span><div class="right"><span style="font-size:13px;color:var(--gray-700);cursor:pointer;">编辑</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;width:18px;height:18px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>
+  <div class="navbar"><button class="back" onclick="goBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button><span class="title">我的关注</span><div class="right"><span style="font-size:var(--fs-base);color:var(--gray-700);cursor:pointer;">编辑</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;width:18px;height:18px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>
   <div class="filter-bar" id="ff"><button class="filter-chip on" onclick="filterF('all',this)">全部</button><button class="filter-chip" onclick="filterF('up',this)">涨</button><button class="filter-chip" onclick="filterF('down',this)">跌</button></div>
   <div class="overview-bar">今日 <span class="uc">4涨</span> <span class="dc">2跌</span></div>
   <div class="table-head"><span class="th-n">热点宝贝</span><span class="th-p">闲鱼价</span><span class="th-c">涨跌</span></div>
@@ -210,24 +286,24 @@ body{font-family:var(--font);background:#E0E0E0;display:flex;justify-content:cen
   <div class="navbar"><button class="back" onclick="goBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button><span class="title" id="topic-detail-title">耐克华夫饼跑鞋涨价</span><div class="right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div></div>
   <div class="scroll">
     <!-- 热点词条 -->
-    <div style="padding:14px 16px;border-bottom:1px solid var(--gray-100);">
-      <div style="font-size:16px;font-weight:700;color:var(--black);margin-bottom:6px;" id="topic-headline">#耐克华夫饼跑鞋 闲鱼价一周涨5.8%</div>
-      <div style="font-size:13px;color:var(--gray-700);line-height:1.6;" id="topic-summary">复古跑鞋品类季节性需求上升，叠加社媒穿搭博主带火"复古运动风"，供需比降至0.7，卖方市场特征明显。</div>
-      <div style="display:flex;gap:6px;margin-top:8px;">
-        <span style="font-size:10px;background:var(--red-bg);color:var(--red);padding:2px 8px;border-radius:3px;font-weight:600;">涨价行情</span>
-        <span style="font-size:10px;background:var(--gray-100);color:var(--gray-700);padding:2px 8px;border-radius:3px;">供需比 0.7</span>
-        <span style="font-size:10px;background:var(--gray-100);color:var(--gray-700);padding:2px 8px;border-radius:3px;">搜索↑32%</span>
+    <div style="padding:var(--space-lg);border-bottom:1px solid var(--gray-100);background:var(--white);">
+      <div style="font-size:var(--fs-3xl);font-weight:700;color:var(--black);margin-bottom:var(--space-sm);line-height:var(--leading-tight);" id="topic-headline">#耐克华夫饼跑鞋 闲鱼价一周涨5.8%</div>
+      <div style="font-size:var(--fs-base);color:var(--gray-900);line-height:var(--leading-relaxed);" id="topic-summary">复古跑鞋品类季节性需求上升，叠加社媒穿搭博主带火"复古运动风"，供需比降至0.7，卖方市场特征明显。</div>
+      <div style="display:flex;gap:var(--space-sm);margin-top:var(--space-md);">
+        <span style="font-size:var(--fs-xs);background:var(--red-bg);color:var(--red);padding:var(--space-xs) var(--space-base);border-radius:var(--radius-sm);font-weight:600;">涨价行情</span>
+        <span style="font-size:var(--fs-xs);background:var(--gray-100);color:var(--gray-700);padding:var(--space-xs) var(--space-base);border-radius:var(--radius-sm);">供需比 0.7</span>
+        <span style="font-size:var(--fs-xs);background:var(--gray-100);color:var(--gray-700);padding:var(--space-xs) var(--space-base);border-radius:var(--radius-sm);">搜索↑32%</span>
       </div>
     </div>
 
     <!-- 关联热点宝贝 + 价格趋势 -->
     <div class="sec-head"><span class="label">关联热点宝贝</span><span class="more">价格趋势</span></div>
-    <div class="list-row" onclick="nav('p-item')"><span style="font-size:24px;margin-right:10px;">👟</span><div class="info"><div class="name">Nike Waffle One 小白鞋</div><div class="sub">闲鱼价 ¥420~580 · 近30日成交 512 笔</div></div><div class="val"><div class="pct pct-up">↑5.8%</div></div></div>
-    <div class="list-row" onclick="nav('p-item')"><span style="font-size:24px;margin-right:10px;">👟</span><div class="info"><div class="name">Nike Daybreak 复古跑鞋</div><div class="sub">闲鱼价 ¥350~450 · 近30日成交 198 笔</div></div><div class="val"><div class="pct pct-up">↑4.1%</div></div></div>
-    <div class="list-row" onclick="nav('p-item')"><span style="font-size:24px;margin-right:10px;">👟</span><div class="info"><div class="name">Nike Sacai 联名华夫</div><div class="sub">闲鱼价 ¥680~920 · 近30日成交 87 笔</div></div><div class="val"><div class="pct pct-up">↑7.2%</div></div></div>
+    <div class="list-row" onclick="nav('p-item')"><span style="font-size:26px;margin-right:var(--space-base);">👟</span><div class="info"><div class="name">Nike Waffle One 小白鞋</div><div class="sub">闲鱼价 ¥420~580 · 近30日成交 512 笔</div></div><div class="val"><div class="pct pct-up">↑5.8%</div></div></div>
+    <div class="list-row" onclick="nav('p-item')"><span style="font-size:26px;margin-right:var(--space-base);">👟</span><div class="info"><div class="name">Nike Daybreak 复古跑鞋</div><div class="sub">闲鱼价 ¥350~450 · 近30日成交 198 笔</div></div><div class="val"><div class="pct pct-up">↑4.1%</div></div></div>
+    <div class="list-row" onclick="nav('p-item')"><span style="font-size:26px;margin-right:var(--space-base);">👟</span><div class="info"><div class="name">Nike Sacai 联名华夫</div><div class="sub">闲鱼价 ¥680~920 · 近30日成交 87 笔</div></div><div class="val"><div class="pct pct-up">↑7.2%</div></div></div>
 
     <!-- 价格走势图 -->
-    <div class="chart-wrap" style="border-top:8px solid var(--gray-100);">
+    <div class="chart-wrap" style="border-top:var(--space-md) solid var(--gray-100);">
       <div class="chart-head"><span class="t">价格走势（话题均价）</span><div class="period-tabs"><button class="period-tab" onclick="redraw('tc',7,this)">7日</button><button class="period-tab on" onclick="redraw('tc',30,this)">30日</button><button class="period-tab" onclick="redraw('tc',90,this)">90日</button></div></div>
       <div class="canvas-box"><canvas id="tc"></canvas></div>
     </div>
@@ -252,11 +328,11 @@ body{font-family:var(--font);background:#E0E0E0;display:flex;justify-content:cen
     </div>
 
     <!-- 同款相关商品 -->
-    <div style="border-top:8px solid var(--gray-100);">
+    <div style="border-top:var(--space-md) solid var(--gray-100);background:var(--white);">
       <div class="sec-head"><span class="label">同款相关商品</span></div>
-      <div class="list-row" onclick="nav('p-product')"><span style="font-size:20px;margin-right:10px;">👟</span><div class="info"><div class="name">Nike Waffle One 复古华夫饼 全新</div><div class="sub">¥399 · 包邮</div></div></div>
-      <div class="list-row" onclick="nav('p-product')"><span style="font-size:20px;margin-right:10px;">👟</span><div class="info"><div class="name">耐克华夫饼跑鞋 95新 42码</div><div class="sub">¥320 · 自提</div></div></div>
-      <div class="list-row" onclick="nav('p-product')"><span style="font-size:20px;margin-right:10px;">👟</span><div class="info"><div class="name">Nike Daybreak 白灰色 女款37</div><div class="sub">¥280 · 包邮</div></div></div>
+      <div class="list-row" onclick="nav('p-product')"><span style="font-size:22px;margin-right:var(--space-base);">👟</span><div class="info"><div class="name">Nike Waffle One 复古华夫饼 全新</div><div class="sub">¥399 · 包邮</div></div></div>
+      <div class="list-row" onclick="nav('p-product')"><span style="font-size:22px;margin-right:var(--space-base);">👟</span><div class="info"><div class="name">耐克华夫饼跑鞋 95新 42码</div><div class="sub">¥320 · 自提</div></div></div>
+      <div class="list-row" onclick="nav('p-product')"><span style="font-size:22px;margin-right:var(--space-base);">👟</span><div class="info"><div class="name">Nike Daybreak 白灰色 女款37</div><div class="sub">¥280 · 包邮</div></div></div>
     </div>
     <div style="height:80px;"></div>
   </div>
@@ -269,9 +345,9 @@ body{font-family:var(--font);background:#E0E0E0;display:flex;justify-content:cen
   <div class="navbar"><button class="back" onclick="goBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button><span class="title">Cracle Coin 高品质IP限定宝盒</span><div class="right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg><button class="follow-btn" onclick="this.classList.toggle('on');this.textContent=this.classList.contains('on')?'已关注 ✓':'关注 +'">关注 +</button></div></div>
   <div class="scroll">
     <!-- 热点宝贝名称 + 价格 -->
-    <div style="padding:14px 16px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span style="font-size:32px;">🪙</span><div><div style="font-size:16px;font-weight:700;">Cracle Coin 高品质IP限定宝盒</div><div style="display:flex;align-items:center;gap:6px;margin-top:2px;"><span style="font-size:10px;background:var(--yellow);padding:1px 6px;border-radius:3px;font-weight:600;">闲鱼价</span></div></div></div>
-      <div style="display:flex;align-items:baseline;gap:6px;"><span style="font-family:var(--mono);font-size:34px;font-weight:900;">¥380<span style="font-size:20px;color:var(--gray-500);font-weight:400;">~</span>420</span><span style="font-family:var(--mono);font-size:14px;font-weight:600;color:var(--green);">↓3.2%</span><span style="font-size:11px;color:var(--gray-500);">近七日</span></div>
+    <div style="padding:var(--space-lg);background:var(--white);">
+      <div style="display:flex;align-items:center;gap:var(--space-base);margin-bottom:var(--space-md);"><span style="font-size:36px;">🪙</span><div><div style="font-size:var(--fs-2xl);font-weight:700;color:var(--black);">Cracle Coin 高品质IP限定宝盒</div><div style="display:flex;align-items:center;gap:var(--space-xs);margin-top:var(--space-xs);"><span style="font-size:var(--fs-xs);background:var(--yellow);padding:1px var(--space-sm);border-radius:var(--radius-sm);font-weight:700;">闲鱼价</span></div></div></div>
+      <div style="display:flex;align-items:baseline;gap:var(--space-sm);"><span style="font-family:var(--mono);font-size:36px;font-weight:900;color:var(--black);">¥380<span style="font-size:22px;color:var(--gray-500);font-weight:400;">~</span>420</span><span style="font-family:var(--mono);font-size:var(--fs-lg);font-weight:600;color:var(--green);">↓3.2%</span><span style="font-size:var(--fs-sm);color:var(--gray-500);">近七日</span></div>
     </div>
 
     <!-- 价格走势图 -->
@@ -291,7 +367,7 @@ body{font-family:var(--font);background:#E0E0E0;display:flex;justify-content:cen
     </div>
 
     <!-- SKU列表 -->
-    <div style="border-top:8px solid var(--gray-100);">
+    <div style="border-top:var(--space-md) solid var(--gray-100);background:var(--white);">
       <div class="sec-head"><span class="label">SKU 明细</span><span class="more">4个规格</span></div>
       <div class="sku-row"><span class="sku-tag">标准版</span><span class="sku-price">¥380</span><span class="sku-pct pct-down" style="background:var(--green-bg);">↓4.0%</span></div>
       <div class="sku-row"><span class="sku-tag">限量编号版</span><span class="sku-price">¥420</span><span class="sku-pct pct-down" style="background:var(--green-bg);">↓2.3%</span></div>
@@ -300,11 +376,11 @@ body{font-family:var(--font);background:#E0E0E0;display:flex;justify-content:cen
     </div>
 
     <!-- 同款相关商品 -->
-    <div style="border-top:8px solid var(--gray-100);">
+    <div style="border-top:var(--space-md) solid var(--gray-100);background:var(--white);">
       <div class="sec-head"><span class="label">同款相关商品</span></div>
-      <div class="list-row" onclick="nav('p-product')"><span style="font-size:20px;margin-right:10px;">🪙</span><div class="info"><div class="name">Cracle Coin 标准版 全新未拆</div><div class="sub">¥385 · 3月28日发布</div></div></div>
-      <div class="list-row" onclick="nav('p-product')"><span style="font-size:20px;margin-right:10px;">🪙</span><div class="info"><div class="name">Cracle Coin 限量编号 #0042</div><div class="sub">¥430 · 3月27日发布</div></div></div>
-      <div class="list-row" onclick="nav('p-product')"><span style="font-size:20px;margin-right:10px;">🪙</span><div class="info"><div class="name">Cracle Coin 标准版 拆封验货</div><div class="sub">¥375 · 3月27日发布</div></div></div>
+      <div class="list-row" onclick="nav('p-product')"><span style="font-size:22px;margin-right:var(--space-base);">🪙</span><div class="info"><div class="name">Cracle Coin 标准版 全新未拆</div><div class="sub">¥385 · 3月28日发布</div></div></div>
+      <div class="list-row" onclick="nav('p-product')"><span style="font-size:22px;margin-right:var(--space-base);">🪙</span><div class="info"><div class="name">Cracle Coin 限量编号 #0042</div><div class="sub">¥430 · 3月27日发布</div></div></div>
+      <div class="list-row" onclick="nav('p-product')"><span style="font-size:22px;margin-right:var(--space-base);">🪙</span><div class="info"><div class="name">Cracle Coin 标准版 拆封验货</div><div class="sub">¥375 · 3月27日发布</div></div></div>
     </div>
     <div style="height:80px;"></div>
   </div>
@@ -316,23 +392,23 @@ body{font-family:var(--font);background:#E0E0E0;display:flex;justify-content:cen
   <div class="statusbar" style="position:absolute;top:0;left:0;right:0;background:transparent;z-index:100;color:#fff;"><span>9:41</span><div class="r"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.24 4.24 0 00-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg></div></div>
   <div class="scroll" style="padding:0;">
     <div class="pd-img"><button class="bf" onclick="goBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button><span style="font-size:120px;">👟</span></div>
-    <div style="padding:14px 16px;background:var(--white);">
-      <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:var(--red);margin-bottom:4px;">¥399</div>
-      <div style="font-size:15px;color:var(--black);line-height:1.4;">Nike Waffle One 小白鞋 复古华夫饼跑鞋 男女同款 DC0481-100</div>
-      <div style="display:flex;gap:6px;margin-top:8px;">
-        <span style="font-size:11px;background:var(--yellow-light);color:#B8860B;padding:2px 8px;border-radius:3px;">正品鉴定</span>
-        <span style="font-size:11px;background:var(--gray-100);color:var(--gray-700);padding:2px 8px;border-radius:3px;">7天无理由</span>
+    <div style="padding:var(--space-lg);background:var(--white);">
+      <div style="font-family:var(--mono);font-size:var(--fs-4xl);font-weight:700;color:var(--red);margin-bottom:var(--space-sm);">¥399</div>
+      <div style="font-size:var(--fs-lg);color:var(--gray-900);line-height:var(--leading-normal);margin-bottom:var(--space-md);">Nike Waffle One 小白鞋 复古华夫饼跑鞋 男女同款 DC0481-100</div>
+      <div style="display:flex;gap:var(--space-sm);">
+        <span style="font-size:var(--fs-sm);background:var(--yellow-light);color:#B8860B;padding:var(--space-xs) var(--space-base);border-radius:var(--radius-sm);font-weight:600;">正品鉴定</span>
+        <span style="font-size:var(--fs-sm);background:var(--gray-100);color:var(--gray-700);padding:var(--space-xs) var(--space-base);border-radius:var(--radius-sm);">7天无理由</span>
       </div>
     </div>
     <!-- 热点趋势入口卡片 -->
     <div class="tc-card" onclick="goBack()">
-      <div class="tch"><div class="tcl"><span class="dot"></span>热点行情趋势</div><span style="color:var(--gray-400);font-size:16px;">›</span></div>
+      <div class="tch"><div class="tcl"><span class="dot"></span>热点行情趋势</div><span style="color:var(--gray-400);font-size:18px;">›</span></div>
       <div class="tcc"><canvas id="pc"></canvas></div>
       <div class="tcf"><span>近30日最低 <span class="tv">¥350</span></span><span>近30日最高 <span class="tv">¥580</span></span><span class="tv pct-up">↑5.8%</span></div>
     </div>
-    <div style="padding:14px 16px;border-top:8px solid var(--gray-100);">
-      <div style="font-size:14px;font-weight:700;margin-bottom:8px;">商品详情</div>
-      <div style="font-size:13px;color:var(--gray-700);line-height:1.8;"><p>品牌：Nike</p><p>型号：Waffle One</p><p>货号：DC0481-100</p><p>配色：White/Orange</p><p>鞋面材质：网布+绒面革</p></div>
+    <div style="padding:var(--space-lg);border-top:var(--space-md) solid var(--gray-100);background:var(--white);">
+      <div style="font-size:var(--fs-lg);font-weight:600;margin-bottom:var(--space-md);">商品详情</div>
+      <div style="font-size:var(--fs-base);color:var(--gray-900);line-height:var(--leading-relaxed);"><p>品牌：Nike</p><p>型号：Waffle One</p><p>货号：DC0481-100</p><p>配色：White/Orange</p><p>鞋面材质：网布+绒面革</p></div>
     </div>
     <div style="height:40px;"></div>
   </div>
@@ -341,9 +417,8 @@ body{font-family:var(--font);background:#E0E0E0;display:flex;justify-content:cen
 </div>
 
 <script>
-/* ===== 数据（占位，等你提供真实数据后替换） ===== */
+/* ===== 数据 ===== */
 
-// 热点话题数据：由热点宝贝价格信号 + 规则 + prompt生成
 const topics = [
   {title:'#耐克华夫饼跑鞋 闲鱼价一周涨5.8%', tag:'涨价行情', tagType:'up', desc:'复古跑鞋品类需求上升，社媒穿搭博主带火"复古运动风"，供需比降至0.7', meta:'3个关联宝贝 · 搜索↑32%'},
   {title:'#Cracle Coin 限定宝盒 价格回调', tag:'跌价行情', tagType:'down', desc:'新品上市后首批溢价空间消化，市场回归理性定价', meta:'1个关联宝贝 · 供需比1.2'},
@@ -352,7 +427,6 @@ const topics = [
   {title:'#iPhone 15 Pro 进入贬值周期', tag:'跌价行情', tagType:'down', desc:'iPhone 17系列发布在即，旧款开始贬值', meta:'1个关联宝贝 · 供需比1.4'},
 ];
 
-// 热点宝贝价格 - 市场价格
 const marketItems = [
   {n:'Nintendo Switch',p:'¥1,850',c:'+8.2%',up:1},
   {n:'Nike Waffle One 小白鞋',p:'¥580',c:'+5.8%',up:1},
@@ -366,7 +440,6 @@ const marketItems = [
   {n:'iPad Pro M4',p:'¥5,900',c:'-1.5%',up:0},
 ];
 
-// 热点宝贝价格 - 我的关注
 const followItems = [
   {n:'Nike Waffle One 小白鞋',p:'¥580',c:'+5.8%',up:1},
   {n:'Nintendo Switch',p:'¥1,850',c:'+8.2%',up:1},
@@ -378,7 +451,6 @@ const followItems = [
 
 /* ===== 渲染首页 ===== */
 
-// 渲染热点话题列表
 function renderTopics(){
   document.getElementById('topic-list').innerHTML = topics.map(t=>{
     const tagClass = t.tagType==='up'?'tag-up':t.tagType==='down'?'tag-down':'tag-hot';
@@ -390,12 +462,11 @@ function renderTopics(){
   }).join('');
 }
 
-// 渲染热点宝贝价格列表
 let currentPriceTab = 'market';
 function renderPriceList(tab){
   const list = tab==='market' ? marketItems : followItems;
   document.getElementById('price-list').innerHTML = list.map((x,i)=>
-    `<div class="table-row" onclick="nav('p-item')"><span style="width:22px;font-size:13px;font-weight:700;color:${i<3?(x.up?'var(--red)':'var(--green)'):'var(--gray-400)'};margin-right:10px;text-align:center;flex-shrink:0;">${i+1}</span><span class="tn">${x.n}</span><span class="tp">${x.p}</span><span class="tc ${x.up?'pct-up':'pct-down'}">${x.c}</span></div>`
+    `<div class="table-row" onclick="nav('p-item')"><span style="width:22px;font-size:var(--fs-base);font-weight:700;color:${i<3?(x.up?'var(--red)':'var(--green)'):'var(--gray-400)'};margin-right:var(--space-sm);text-align:center;flex-shrink:0;">${i+1}</span><span class="tn">${x.n}</span><span class="tp">${x.p}</span><span class="tc ${x.up?'pct-up':'pct-down'}">${x.c}</span></div>`
   ).join('');
 }
 function switchPriceTab(tab,btn){
@@ -405,7 +476,6 @@ function switchPriceTab(tab,btn){
   renderPriceList(tab);
 }
 
-// 渲染我的关注页
 function renderFollow(f){
   let l = followItems;
   if(f==='up') l = l.filter(x=>x.up);
